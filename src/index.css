@@ -1,0 +1,43 @@
+/* Tailwind CSS 임포트 */
+@import "tailwindcss";
+
+/* 모바일 웹앱 최적화를 위한 기본 스타일 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent; /* 모바일 탭 하이라이트 제거 */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* 스크롤 방지 */
+  -webkit-font-smoothing: antialiased; /* 폰트 렌더링 최적화 */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Pretendard 폰트를 기본으로 설정 */
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+
+  /* 화면 중앙 정렬을 위한 배경색 */
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+
+  /* iPhone 16 Pro 사이즈: 402 x 874px */
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* 동적 뷰포트 높이 (모바일 주소창 고려) */
+
+  /* 데스크탑에서는 iPhone 16 Pro 크기로 제한 */
+  max-width: 402px;
+  max-height: 874px;
+}

@@ -1,0 +1,10 @@
+export { default as StartChallengeScreen } from './StartChallengeScreen';
+export { default as StartChallengeAgeScreen } from './StartChallengeAgeScreen';
+export { default as StartChallengeYouthScreen } from './StartChallengeYouthScreen';
+export { default as StartChallengeAdultScreen } from './StartChallengeAdultScreen';
+export { default as StartChallengeRecommendScreen } from './StartChallengeRecommendScreen';
+export { default as StartChallengeProductScreen } from './StartChallengeProductScreen';
+export { default as StartChallengeCopyCodeScreen } from './StartChallengeCopyCodeScreen';
+export { default as StartChallengeNotifyScreen } from './StartChallengeNotifyScreen';
+export { default as StartChallengeSearchNameScreen } from './StartChallengeSearchNameScreen';
+export { default as StartChallengeCompleteScreen } from './StartChallengeCompleteScreen';

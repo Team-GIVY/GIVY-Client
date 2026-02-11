@@ -1,0 +1,69 @@
+home-controller
+
+
+GET
+/home
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://43.202.26.68:8080/home' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NzA1Njk5OTAsImV4cCI6MTc3MDU3MzU5MH0.wyhJT5d8unfelY1Za3J6VafEIpl05VdUNqwfi-x9jLA'
+Request URL
+http://43.202.26.68:8080/home
+Server response
+Code	Details
+401
+Undocumented
+Error: response status is 401
+
+Response body
+Download
+{
+  "isSuccess": false,
+  "code": "AUTH401_1",
+  "message": "인증이 필요합니다.",
+  "result": null
+}
+Response headers
+ cache-control: no-cache,no-store,max-age=0,must-revalidate 
+ connection: keep-alive 
+ content-length: 91 
+ content-type: application/json;charset=UTF-8 
+ date: Sun,08 Feb 2026 22:24:38 GMT 
+ expires: 0 
+ keep-alive: timeout=60 
+ pragma: no-cache 
+ vary: Origin,Access-Control-Request-Method,Access-Control-Request-Headers 
+ x-content-type-options: nosniff 
+ x-frame-options: DENY 
+ x-xss-protection: 0 
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "isSuccess": true,
+  "code": "string",
+  "message": "string",
+  "result": {
+    "nickname": "string",
+    "status": "string",
+    "data": "string"
+  }
+}
+No links
