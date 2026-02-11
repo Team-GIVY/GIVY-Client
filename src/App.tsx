@@ -254,7 +254,7 @@ function App() {
         console.log('[loadUserData] getHome 성공:', homeData);
         console.log('[loadUserData] homeData.status:', homeData.status, '| 타입:', typeof homeData.status);
         console.log('[loadUserData] homeData.data:', homeData.data);
-        const nickname = homeData.nickname || userDetail.nickname;
+        const nickname = homeData.nickname || userDetail.nickname || '';
         console.log('[loadUserData] nickname 설정:', nickname);
         setHomeNickname(nickname);
         localStorage.setItem('cachedNickname', nickname);
@@ -273,8 +273,8 @@ function App() {
         // 홈 데이터 실패 시 nickname 사용
         console.log('[loadUserData] getHome 실패:', homeErr);
         console.log('[loadUserData] nickname으로 대체:', userDetail.nickname);
-        setHomeNickname(userDetail.nickname);
-        localStorage.setItem('cachedNickname', userDetail.nickname);
+        setHomeNickname(userDetail.nickname || '');
+        localStorage.setItem('cachedNickname', userDetail.nickname || '');
       }
 
       // 성향 테스트 완료 여부 확인 및 성향 데이터 로드
@@ -1225,7 +1225,7 @@ function App() {
     localStorage.setItem('currentScreen', 'profileEdit');
   };
 
-  const handleDisconnectAccount = (provider: string) => {
+  const handleDisconnectAccount = (provider: 'naver' | 'google' | 'kakao' | 'apple' | 'email' | null) => {
     console.log('소셜 계정 해지:', provider);
     // TODO: 소셜 계정 해지 API 호출
   };
@@ -1761,11 +1761,6 @@ function App() {
             onProfileImageChange={handleProfileImageChange}
             onLinkedAccount={handleLinkedAccount}
             onLanguage={handleLanguage}
-            profileData={{
-              nickname: homeNickname || userInfo?.nickname || '닉네임',
-              name: userInfo?.nickname || '이름',
-              email: userInfo?.email || '이메일',
-            }}
           />
         </div>
       )}

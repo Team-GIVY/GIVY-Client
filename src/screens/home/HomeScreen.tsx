@@ -41,7 +41,7 @@ function HomeScreen({
   maxDown: propMaxDown = '± 15%',
 }: HomeScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [homeData, setHomeData] = useState<{
+  const [, setHomeData] = useState<{
     nickname: string;
     status: string;
   } | null>(null);

@@ -44,7 +44,7 @@ export const usePushNotification = (): UsePushNotificationReturn => {
     });
 
     return () => {
-      // cleanup if needed
+      unsubscribe?.();
     };
   }, [isPermissionGranted]);
 

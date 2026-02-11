@@ -17,7 +17,7 @@ function PasswordChangeScreen({ onBack, onComplete }: PasswordChangeScreenProps)
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
 
   const handleBack = () => {
     if (step === 2) {

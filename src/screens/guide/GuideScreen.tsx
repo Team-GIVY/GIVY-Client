@@ -37,8 +37,8 @@ function GuideScreen({ onTabChange, onDetailClick }: GuideScreenProps) {
   const [activeTab, setActiveTab] = useState<'guide' | 'quiz'>('guide');
   const [currentCard, setCurrentCard] = useState(0);
   const [guides, setGuides] = useState<GuideSummaryDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<GuideCategory | undefined>(undefined);
+  const [, setIsLoading] = useState(false);
+  const [selectedCategory] = useState<GuideCategory | undefined>(undefined);
 
   // 가이드 목록 로드
   useEffect(() => {
