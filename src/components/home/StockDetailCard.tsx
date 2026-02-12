@@ -2,8 +2,7 @@ import { useState } from 'react';
 import changeCircleOn from '../../assets/images/svg/ic_change-circle_on.svg';
 import changeCircleOff from '../../assets/images/svg/ic_change-circle_off.svg';
 import flightIcon from '../../assets/images/svg/ic_flight_color.svg';
-// 차트 라이브러리 (추후 사용 예정)
-// import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, Line } from 'recharts';
 
 // Stock Info 타입 정의
 export interface StockInfo {
@@ -34,26 +33,25 @@ function StockDetailCard({ stockInfo }: StockDetailCardProps) {
     setIsFlipped(!isFlipped);
   };
 
-  // Mock 차트 데이터 (API 연동 시 사용 예정)
-  // const defaultChartData = [
-  //   { date: '1월', value: 0 },
-  //   { date: '2월', value: 2 },
-  //   { date: '3월', value: -1 },
-  //   { date: '4월', value: 3 },
-  //   { date: '5월', value: 1 },
-  //   { date: '6월', value: 4 },
-  //   { date: '7월', value: 2 },
-  //   { date: '8월', value: 5 },
-  //   { date: '9월', value: 3 },
-  //   { date: '10월', value: 6 },
-  //   { date: '11월', value: 4 },
-  //   { date: '12월', value: 7 },
-  // ];
-  // const chartData = stockInfo.chartData || defaultChartData;
-
   const averageYield = stockInfo.averageYield ?? 6;
   const maxIncrease = stockInfo.maxIncrease ?? 15;
   const maxDecrease = stockInfo.maxDecrease ?? 15;
+
+  // 차트 데이터: prop이 있으면 사용, 없으면 averageYield 기반 12개월 데이터 생성
+  const chartData = stockInfo.chartData || (() => {
+    const rate = averageYield / 100;
+    const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+    const base = 100;
+    return months.map((date, i) => {
+      const t = i / 11;
+      // 주가: 급등락이 뚜렷한 곡선 (상승 추세 + 큰 변동)
+      const value = base + t * rate * base * 1.5
+        + Math.sin(i * 1.6) * 10 + Math.cos(i * 0.8) * 6 + Math.sin(i * 3) * 3;
+      // 벤치마크: 거의 직선에 가까운 완만한 곡선
+      const benchmark = base + t * rate * base * 0.15 + Math.sin(i * 0.4) * 1;
+      return { date, value: +value.toFixed(1), benchmark: +benchmark.toFixed(1) };
+    });
+  })();
 
   return (
     <div
@@ -347,7 +345,7 @@ function StockDetailCard({ stockInfo }: StockDetailCardProps) {
             </h3>
           </div>
 
-          {/* 차트 영역 (추후 API 연동 시 활성화) */}
+          {/* 차트 영역 */}
           <div
             style={{
               width: '100%',
@@ -356,28 +354,33 @@ function StockDetailCard({ stockInfo }: StockDetailCardProps) {
               boxSizing: 'border-box',
             }}
           >
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                border: 'solid 1px #e0e0e0',
-                borderRadius: '4px',
-                backgroundColor: '#fafafa',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: 'Pretendard',
-                  fontSize: '12px',
-                  color: '#a9a9a9',
-                }}
-              >
-                차트 영역
-              </span>
-            </div>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                <defs>
+                  <linearGradient id={`chartGrad-${stockInfo.ticker}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#545fe8" stopOpacity={0.25} />
+                    <stop offset="100%" stopColor="#545fe8" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#545fe8"
+                  strokeWidth={2}
+                  fill={`url(#chartGrad-${stockInfo.ticker})`}
+                  dot={false}
+                  activeDot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="benchmark"
+                  stroke="#d0d0d0"
+                  strokeWidth={1.5}
+                  dot={false}
+                  activeDot={false}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
 
           {/* 평균 수익률 */}
