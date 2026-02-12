@@ -373,7 +373,7 @@ function App() {
     const isOnPersonalityScreen = showPersonalityTestIntro || showPersonalityTestQuestion ||
                                    showPersonalityTestAnalyzing || showPersonalityTestResult;
 
-    if (tendencyCompleted && isOnPersonalityScreen && !showPersonalityRetest) {
+    if (tendencyCompleted && isOnPersonalityScreen && !showPersonalityRetest && previousScreen !== 'settings') {
       // 성향 테스트 완료 상태인데 테스트 화면에 있으면 리다이렉트
       setShowPersonalityTestIntro(false);
       setShowPersonalityTestQuestion(false);
@@ -405,7 +405,7 @@ function App() {
     localStorage.setItem('currentScreen', 'emailLogin');
   };
 
-  const handleSocialLogin = (provider: 'kakao' | 'google' | 'apple') => {
+  const handleSocialLogin = async (provider: 'kakao' | 'google' | 'apple') => {
     console.log(`${provider} 소셜 로그인 성공`);
     // 로그인 성공 시 시간 저장
     localStorage.setItem('lastLoginTime', new Date().toISOString());
@@ -417,7 +417,10 @@ function App() {
     setShowLogin(false);
     setShowEmailLogin(false);
 
-    // localStorage에서 진행 상태 확인 (단순 boolean 체크)
+    // 서버에서 사용자 상태 로드
+    await loadUserData();
+
+    // 서버 확인 후 진행 상태 읽기
     const tendencyCompleted = localStorage.getItem('tendencyCompleted') === 'true';
     const challengeCompleted = localStorage.getItem('challengeCompleted') === 'true';
 
@@ -452,7 +455,7 @@ function App() {
     localStorage.setItem('currentScreen', 'login');
   };
 
-  const handleEmailLoginSubmit = (email: string, password: string) => {
+  const handleEmailLoginSubmit = async (email: string, password: string) => {
     console.log('이메일 로그인 성공:', { email, password });
     // 로그인 성공 시 시간 저장
     localStorage.setItem('lastLoginTime', new Date().toISOString());
@@ -464,7 +467,10 @@ function App() {
     setShowEmailLogin(false);
     setShowLogin(false);
 
-    // localStorage에서 진행 상태 확인 (단순 boolean 체크)
+    // 서버에서 사용자 상태 로드
+    await loadUserData();
+
+    // 서버 확인 후 진행 상태 읽기
     const tendencyCompleted = localStorage.getItem('tendencyCompleted') === 'true';
     const challengeCompleted = localStorage.getItem('challengeCompleted') === 'true';
 
@@ -734,10 +740,33 @@ function App() {
     localStorage.setItem('currentScreen', 'startChallenge');
   };
 
-  const handleStartChallengeRecommendConfirm = (brokerage: string) => {
+  const handleStartChallengeRecommendConfirm = async (brokerage: string) => {
     console.log('추천 증권사 선택:', brokerage);
     localStorage.setItem('selectedBrokerage', brokerage);
     setSelectedBrokerage(brokerage);
+
+    // 상품 데이터가 없으면 화면 전환 전에 로드
+    if (allProducts.length === 0) {
+      try {
+        const recommendations = await tendencyApi.getRecommendations();
+        if (recommendations.products && recommendations.products.length > 0) {
+          setAllProducts(recommendations.products);
+          setRecommendedProduct(recommendations.products[0]);
+          if (recommendations.investmentType) {
+            setInvestmentType(recommendations.investmentType);
+            localStorage.setItem('investmentType', recommendations.investmentType);
+          }
+        } else {
+          alert('추천 상품이 없습니다. 성향 테스트를 다시 진행해주세요.');
+          return;
+        }
+      } catch (err) {
+        console.error('추천 상품 조회 실패:', err);
+        alert('추천 상품을 불러오지 못했습니다. 다시 시도해주세요.');
+        return;
+      }
+    }
+
     setShowStartChallengeRecommend(false);
     setShowStartChallengeProduct(true);
     localStorage.setItem('currentScreen', 'startChallengeProduct');

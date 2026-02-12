@@ -1,6 +1,14 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
-import { getAccessToken, getRefreshToken, saveTokens } from '../utils/token';
+import { getAccessToken, getRefreshToken, saveTokens, clearAuth } from '../utils/token';
 import type { ApiResponse, UserTokenRefreshResDTO } from './types';
+
+// 강제 로그아웃 처리
+const forceLogout = () => {
+  console.log('[apiClient] 인증 만료 - 로그아웃 처리');
+  clearAuth();
+  localStorage.setItem('currentScreen', 'login');
+  window.location.reload();
+};
 
 // API 기본 URL 설정 (환경변수 사용)
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://43.202.26.68:8080';
@@ -100,9 +108,13 @@ apiClient.interceptors.response.use(
           }
         } catch (refreshError) {
           console.log('[apiClient] 토큰 갱신 실패:', refreshError);
+          forceLogout();
+          return Promise.reject(refreshError);
         }
       } else {
         console.log('[apiClient] refreshToken 없음');
+        forceLogout();
+        return Promise.reject(error);
       }
     }
 
