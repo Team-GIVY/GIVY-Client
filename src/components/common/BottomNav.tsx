@@ -23,7 +23,7 @@ function BottomNav({ activeTab = 'home', onTabChange }: BottomNavProps) {
         height: '90px',
         backgroundColor: '#FFFFFF',
         boxShadow: '0 -4px 20px 0 rgba(0, 0, 0, 0.12)',
-        paddingTop: '21px',
+        paddingBottom: '10px',
         borderRadius: '20px 20px 0 0',
       }}
     >

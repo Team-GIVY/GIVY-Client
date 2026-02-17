@@ -49,10 +49,7 @@ function SignupEmailPasswordScreen({ onBack, onNext, userName }: SignupEmailPass
       await authApi.signup({
         email,
         password,
-        name: userName || '',
-        nickname: userName || '',  // 닉네임은 이름과 동일하게 설정
-        language: 'KO',
-        birthDate,  // YYYY-MM-DD 형식
+        username: userName || '',
       });
 
       console.log('회원가입 성공:', { email, name: userName });
@@ -88,7 +85,7 @@ function SignupEmailPasswordScreen({ onBack, onNext, userName }: SignupEmailPass
 
   return (
     <div
-      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-hidden"
+      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-x-hidden overflow-y-auto"
       style={{ backgroundColor: '#F5F5F5' }}
     >
       {/* 뒤로가기 버튼 */}

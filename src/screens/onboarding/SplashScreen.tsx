@@ -15,7 +15,7 @@ import givyLogo from '../../assets/images/png/img_logo_givy_symbol.png';
 function Splash() {
   return (
     // 전체 화면 컨테이너 (iPhone 16 Pro 사이즈: 402 x 874px)
-    <div className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto bg-[#7681FC] flex flex-col text-white overflow-hidden relative">
+    <div className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto bg-[#7681FC] flex flex-col text-white overflow-x-hidden overflow-y-auto relative">
 
       {/* 메인 텍스트 섹션 - margin: 101px 123px 295px 24px */}
       <div
@@ -55,23 +55,30 @@ function Splash() {
         <div>첫 걸음.</div>
       </div>
 
-      {/* 하단 로고 섹션 - 왼쪽 하단 배치 */}
-      <div className="absolute bottom-[34px] left-[24px]">
+      {/* 하단 로고 섹션 */}
+      <div className="absolute left-[24px]" style={{ top: '295px' }}>
         {/* G 로고 아이콘 */}
         <img
           src={givyLogo}
           alt="GIVY"
           style={{
-            width: '48px',
-            height: '44px',
-            marginBottom: '4px',
+            width: '45px',
+            height: '41px',
             filter: 'brightness(0) saturate(100%) invert(83%) sepia(10%) saturate(1000%) hue-rotate(200deg) brightness(100%)'
           }}
         />
         {/* GIVY 텍스트 */}
         <div
-          className="font-['Pretendard'] font-extrabold text-[20px] leading-[100%] tracking-[0%]"
-          style={{ color: '#c2c7fc' }}
+          style={{
+            fontFamily: 'Pretendard',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            lineHeight: 1.6,
+            letterSpacing: '-0.2px',
+            textAlign: 'left',
+            color: '#c2c7fc',
+            marginTop: '0px',
+          }}
         >
           GIVY
         </div>

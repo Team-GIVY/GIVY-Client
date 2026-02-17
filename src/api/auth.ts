@@ -142,9 +142,58 @@ export const redirectToKakaoLogin = (): void => {
   window.location.href = 'http://43.202.26.68:8080/oauth/kakao/login';
 };
 
-// 구글 로그인 URL로 리다이렉트
-export const redirectToGoogleLogin = (): void => {
-  window.location.href = 'http://43.202.26.68:8080/oauth/google/login';
+// 구글 ID 토큰으로 로그인 (Google Identity Services 방식)
+export const googleIdTokenLogin = async (idToken: string): Promise<UserLoginResDTO> => {
+  console.log('[구글 로그인] ID 토큰으로 로그인 요청');
+  const response = await publicClient.post<ApiResponse<string>>('/oauth/google/id-token', { idToken });
+
+  if (!response.data.isSuccess) {
+    throw new Error(response.data.message);
+  }
+
+  // 백엔드에서 JWT(accessToken)만 반환하므로 이를 처리
+  const jwt = response.data.result;
+  console.log('[구글 로그인] JWT 발급 성공');
+
+  saveTokens(jwt, '');
+  resetAuthState();
+
+  // 성향 테스트 완료 여부 확인
+  try {
+    await apiClient.get('/tendency/me');
+    localStorage.setItem('tendencyCompleted', 'true');
+  } catch {
+    localStorage.setItem('tendencyCompleted', 'false');
+  }
+
+  // 스타트 챌린지 상태 확인
+  try {
+    const challengeRes = await apiClient.get('/start-challenge');
+    const challengeData = challengeRes.data.result;
+    if (challengeData && challengeData.status === 'COMPLETED') {
+      localStorage.setItem('challengeCompleted', 'true');
+    } else if (challengeData && challengeData.status === 'IN_PROGRESS') {
+      localStorage.setItem('challengeCompleted', 'false');
+      localStorage.setItem('challengeProductId', String(challengeData.productId));
+      localStorage.setItem('startChallengeId', String(challengeData.startChallengeId));
+    }
+  } catch {
+    localStorage.setItem('challengeCompleted', 'false');
+  }
+
+  // 홈 데이터 조회 (유저 상태 및 닉네임)
+  try {
+    const homeRes = await apiClient.get('/home');
+    const homeData = homeRes.data.result;
+    if (homeData) {
+      localStorage.setItem('userStatus', homeData.status || '');
+      localStorage.setItem('cachedNickname', homeData.nickname || '');
+    }
+  } catch {
+    // 홈 데이터 조회 실패
+  }
+
+  return { accessToken: jwt, refreshToken: '' };
 };
 
 // 카카오 콜백 처리
@@ -197,16 +246,6 @@ export const handleKakaoCallback = async (code: string): Promise<UserLoginResDTO
   return response.data.result;
 };
 
-// 구글 콜백 처리
-export const handleGoogleCallback = async (code: string): Promise<string> => {
-  const response = await publicClient.get<ApiResponse<string>>('/oauth/google/callback', {
-    params: { code },
-  });
-  if (!response.data.isSuccess) {
-    throw new Error(response.data.message);
-  }
-  return response.data.result;
-};
 
 export const authApi = {
   signup,
@@ -216,9 +255,8 @@ export const authApi = {
   logout,
   refreshToken,
   redirectToKakaoLogin,
-  redirectToGoogleLogin,
+  googleIdTokenLogin,
   handleKakaoCallback,
-  handleGoogleCallback,
 };
 
 export default authApi;

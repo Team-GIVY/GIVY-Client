@@ -9,7 +9,7 @@ interface PersonalityTestIntroScreenProps {
 function PersonalityTestIntroScreen({ onBack, onStart, userName = '기비' }: PersonalityTestIntroScreenProps) {
   return (
     <div
-      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-hidden"
+      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-x-hidden overflow-y-auto"
       style={{ backgroundColor: '#F5F5F5' }}
     >
       {/* 뒤로가기 버튼 - width: 24px, height: 24px, margin: 23px 116px 0 24px */}

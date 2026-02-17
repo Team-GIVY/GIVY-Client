@@ -24,6 +24,31 @@ const defaultResultData = {
   financialFamiliarity: { label: '낮음', value: 20 },
 };
 
+// label에 따른 게이지 퍼센트 매핑
+const labelToGauge: Record<string, number> = {
+  // 리스크 성향
+  '안정형': 30,
+  '중립형': 55,
+  '공격형': 85,
+  '위험선호': 95,
+  // 유동 성향
+  '단기': 30,
+  '단기 목표': 30,
+  '중기': 55,
+  '중기 목표': 55,
+  '장기': 85,
+  '장기 목표': 85,
+  // 소비 성향
+  '저축 중심': 30,
+  '중립': 55,
+  '소비 중심': 80,
+  // 금융 친숙도
+  '낮음': 25,
+  '보통': 55,
+  '높음': 80,
+  '공격형': 85,
+};
+
 function PersonalityTestResultScreen({
   onBack,
   onNext,
@@ -73,17 +98,15 @@ function PersonalityTestResultScreen({
       <div
         style={{
           flex: 1,
+          position: 'relative',
           height: '8px',
-          backgroundColor: '#E8EAFF',
-          borderRadius: '4px',
           marginLeft: '12px',
           marginRight: '12px',
-          overflow: 'hidden',
         }}
       >
         <div
           style={{
-            width: `${value}%`,
+            width: `${labelToGauge[resultLabel] ?? value}%`,
             height: '100%',
             backgroundColor: '#545FE8',
             borderRadius: '4px',
@@ -114,8 +137,9 @@ function PersonalityTestResultScreen({
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
-        backgroundColor: '#FFFFFF',
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        backgroundColor: '#EDEEF2',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -209,11 +233,17 @@ function PersonalityTestResultScreen({
         {/* 결과 분석 카드 */}
         <div
           style={{
-            backgroundColor: '#FAFAFA',
+            position: 'relative',
+            backgroundColor: '#FFFFFF',
             borderRadius: '16px',
-            padding: '24px 20px',
+            padding: '16px 25px 15px',
           }}
         >
+          {/* 왼쪽 노치 구멍 */}
+          <div style={{ position: 'absolute', left: '-8px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', borderRadius: '50%', backgroundColor: '#EDEEF2' }} />
+          {/* 오른쪽 노치 구멍 */}
+          <div style={{ position: 'absolute', right: '-8px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', borderRadius: '50%', backgroundColor: '#EDEEF2' }} />
+
           <ResultItem
             label="리스트 성향"
             value={resultData.riskTendency.value}

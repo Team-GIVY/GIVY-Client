@@ -169,7 +169,8 @@ function PersonalityTestQuestionScreen({ onBack, onComplete }: PersonalityTestQu
         maxHeight: '874px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#F5F5F5'
       }}
     >

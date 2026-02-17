@@ -91,7 +91,8 @@ function GuideScreen({ onTabChange, onDetailClick }: GuideScreenProps) {
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#F5F5F5',
         display: 'flex',
         flexDirection: 'column',
@@ -168,10 +169,10 @@ function GuideScreen({ onTabChange, onDetailClick }: GuideScreenProps) {
                   height: '420px',
                   padding: '18px 21px',
                   boxSizing: 'border-box',
-                  backgroundImage: 'linear-gradient(to bottom, #fff, #dee0fa)',
+                  background: 'linear-gradient(to bottom, #FFFFFF 0%, #FFFFFF 60%, #DEE0FA 100%)',
                   display: 'flex',
                   flexDirection: 'column',
-                  borderRadius: '20px 20px 0 0',
+                  borderRadius: '20px',
                   boxShadow: '0 0 20px 0 rgba(0, 0, 0, 0.05)',
                 }}
               >
@@ -204,14 +205,10 @@ function GuideScreen({ onTabChange, onDetailClick }: GuideScreenProps) {
                 </div>
               </div>
 
-              {/* 점선 구분선 */}
-              <div
-                style={{
-                  width: '308.2px',
-                  margin: '0 auto',
-                  borderTop: '1px dashed #c0c0c0',
-                }}
-              />
+              {/* 절취선 구분선 */}
+              <svg width="308" height="2" style={{ display: 'block', margin: '0 auto' }}>
+                <line x1="0" y1="1" x2="308" y2="1" stroke="#c0c0c0" strokeWidth="2" strokeDasharray="6 4" />
+              </svg>
 
               {/* 하단 프레임 */}
               <div
@@ -219,10 +216,10 @@ function GuideScreen({ onTabChange, onDetailClick }: GuideScreenProps) {
                   width: '345px',
                   height: '140px',
                   padding: '23px 21px 19px 21px',
-                  borderRadius: '0 0 20px 20px',
+                  borderRadius: '20px',
                   boxShadow: '0 0 20px 0 rgba(0, 0, 0, 0.05)',
                   boxSizing: 'border-box',
-                  backgroundImage: 'linear-gradient(to bottom, #dee0fa 0%, #fff 64%)',
+                  background: 'linear-gradient(to bottom, #DEE0FA 0%, #FFFFFF 40%)',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',

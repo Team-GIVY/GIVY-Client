@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BottomNav } from '../../components/common';
 import { settingsApi } from '../../api';
+import bellIcon from '../../assets/images/svg/ic_bell-fill_slope_gray.svg';
 
 interface NotificationSettingsScreenProps {
   onBack?: () => void;
@@ -13,6 +14,7 @@ function NotificationSettingsScreen({
 }: NotificationSettingsScreenProps) {
   const [challengeEnabled, setChallengeEnabled] = useState(true);
   const [guideEnabled, setGuideEnabled] = useState(false);
+  const [adEnabled, setAdEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // 알림 설정 로드
@@ -30,11 +32,16 @@ function NotificationSettingsScreen({
     loadSettings();
   }, []);
 
-  const handleToggle = async (type: 'challenge' | 'guide') => {
+  const handleToggle = async (type: 'challenge' | 'guide' | 'ad') => {
     if (isLoading) return;
 
     const newChallengeEnabled = type === 'challenge' ? !challengeEnabled : challengeEnabled;
     const newGuideEnabled = type === 'guide' ? !guideEnabled : guideEnabled;
+
+    if (type === 'ad') {
+      setAdEnabled(!adEnabled);
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -58,6 +65,7 @@ function NotificationSettingsScreen({
   const settings = [
     { id: 'challenge', label: '스타트 챌린지 알림', enabled: challengeEnabled },
     { id: 'guide', label: '가이드 알림', enabled: guideEnabled },
+    { id: 'ad', label: '광고성 알림', enabled: adEnabled },
   ];
 
   return (
@@ -68,7 +76,8 @@ function NotificationSettingsScreen({
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#F5F5F5',
         display: 'flex',
         flexDirection: 'column',
@@ -144,16 +153,7 @@ function NotificationSettingsScreen({
               {/* 아이콘 + 라벨 */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 {/* 알림 아이콘 */}
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M18 8A6 6 0 1 0 6 8c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 0 1-3.46 0"
-                    stroke={setting.enabled ? '#545fe8' : '#c6c6c6'}
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    fill={setting.enabled ? '#dee0fa' : 'none'}
-                  />
-                </svg>
+                <img src={bellIcon} alt="알림" style={{ width: '24px', height: '24px' }} />
 
                 <span
                   style={{
@@ -169,7 +169,7 @@ function NotificationSettingsScreen({
 
               {/* 토글 스위치 */}
               <button
-                onClick={() => handleToggle(setting.id as 'challenge' | 'guide')}
+                onClick={() => handleToggle(setting.id as 'challenge' | 'guide' | 'ad')}
                 disabled={isLoading}
                 style={{
                   width: '51px',

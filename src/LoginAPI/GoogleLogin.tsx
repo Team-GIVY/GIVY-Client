@@ -1,19 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { authApi } from '../api';
 
-interface GoogleLoginProps {
-  onSuccess?: (result: string) => void;
+interface GoogleLoginButtonProps {
+  onClick?: () => void;
+  onSuccess?: () => void;
   onError?: (error: Error) => void;
-  onNeedSignup?: () => void;
 }
 
-// 구글 로그인 버튼 컴포넌트
-export const GoogleLoginButton = ({ onClick }: { onClick?: () => void }) => {
+// 구글 로그인 버튼 컴포넌트 (Google Identity Services 방식)
+export const GoogleLoginButton = ({ onClick, onSuccess, onError }: GoogleLoginButtonProps) => {
+  const handleGoogleLogin = useCallback(() => {
+    if (!window.google?.accounts?.id) {
+      const err = new Error('Google 로그인 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      onError?.(err);
+      alert(err.message);
+      return;
+    }
+
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: async (response: { credential: string }) => {
+        try {
+          await authApi.googleIdTokenLogin(response.credential);
+          onSuccess?.();
+        } catch (err) {
+          console.error('구글 로그인 실패:', err);
+          onError?.(err instanceof Error ? err : new Error('구글 로그인에 실패했습니다.'));
+        }
+      },
+    });
+    window.google.accounts.id.prompt();
+  }, [onSuccess, onError]);
+
   const handleClick = () => {
     if (onClick) {
       onClick();
     } else {
-      authApi.redirectToGoogleLogin();
+      handleGoogleLogin();
     }
   };
 
@@ -43,75 +66,6 @@ export const GoogleLoginButton = ({ onClick }: { onClick?: () => void }) => {
       구글로 시작하기
     </button>
   );
-};
-
-// 구글 콜백 처리 컴포넌트
-export const GoogleCallback = ({ onSuccess, onError, onNeedSignup }: GoogleLoginProps) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const handleCallback = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-
-      if (!code) {
-        const errorMsg = '인증 코드가 없습니다.';
-        setError(errorMsg);
-        onError?.(new Error(errorMsg));
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const result = await authApi.handleGoogleCallback(code);
-
-        // 결과에 따라 처리
-        if (result === 'NEED_SIGNUP') {
-          onNeedSignup?.();
-        } else {
-          onSuccess?.(result);
-        }
-      } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : '구글 로그인에 실패했습니다.';
-        setError(errorMsg);
-        onError?.(err instanceof Error ? err : new Error(errorMsg));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    handleCallback();
-  }, [onSuccess, onError, onNeedSignup]);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7681FC] mx-auto mb-4" />
-          <p className="text-gray-600">구글 로그인 처리 중...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.href = '/'}
-            className="px-4 py-2 bg-[#7681FC] text-white rounded-lg"
-          >
-            돌아가기
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
 };
 
 export default GoogleLoginButton;

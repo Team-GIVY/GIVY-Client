@@ -55,7 +55,7 @@ function StartChallengeScreen({ onBack, onNext, onNoAccount }: StartChallengeScr
 
   return (
     <div
-      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-hidden"
+      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-x-hidden overflow-y-auto"
       style={{ backgroundColor: '#F5F5F5' }}
     >
       {/* 상단 영역 */}

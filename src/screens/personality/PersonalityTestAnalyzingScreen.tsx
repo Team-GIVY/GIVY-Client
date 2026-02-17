@@ -31,7 +31,8 @@ function PersonalityTestAnalyzingScreen({ onBack, onNext, userName = '기비' }:
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#FFFFFF',
         display: 'flex',
         flexDirection: 'column'

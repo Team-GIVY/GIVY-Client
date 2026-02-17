@@ -59,7 +59,7 @@ function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   const isLastPage = currentPage === pages.length - 1;
 
   return (
-    <div className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto bg-white relative overflow-hidden">
+    <div className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto bg-white relative overflow-x-hidden overflow-y-auto">
       {/* 페이지 인디케이터*/}
       <div
         className="flex gap-[4px]"

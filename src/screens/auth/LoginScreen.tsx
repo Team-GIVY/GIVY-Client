@@ -1,7 +1,27 @@
-import { Logo } from '../../components/common';
+import { useCallback } from 'react';
+import { authApi } from '../../api';
 import kakaoIcon from '../../assets/images/svg/ic_kakao.svg';
 import googleIcon from '../../assets/images/svg/ic_google.svg';
 import appleIcon from '../../assets/images/svg/ic_apple.svg';
+import { Logo } from '../../components/common';
+
+// Google Identity Services 타입 선언
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: {
+            client_id: string;
+            callback: (response: { credential: string }) => void;
+            auto_select?: boolean;
+          }) => void;
+          prompt: () => void;
+        };
+      };
+    };
+  }
+}
 
 /**
  * LoginScreen - 로그인 화면 컴포넌트
@@ -33,8 +53,34 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
 
   const showRecentLoginBubble = checkRecentLogin();
 
+  const handleGoogleLogin = useCallback(() => {
+    console.log('Google 로그인 시도 (GIS)');
+    if (!window.google?.accounts?.id) {
+      alert('Google 로그인 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: async (response: { credential: string }) => {
+        try {
+          await authApi.googleIdTokenLogin(response.credential);
+          onSocialLogin?.('google');
+        } catch (err) {
+          console.error('구글 로그인 실패:', err);
+          alert('구글 로그인에 실패했습니다.');
+        }
+      },
+    });
+    window.google.accounts.id.prompt();
+  }, [onSocialLogin]);
+
   const handleSocialLogin = (provider: 'kakao' | 'google' | 'apple') => {
     console.log(`${provider} 로그인 시도`);
+    if (provider === 'google') {
+      handleGoogleLogin();
+      return;
+    }
     onSocialLogin?.(provider);
   };
 
@@ -50,10 +96,10 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
 
   return (
     <div
-      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-hidden"
+      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-x-hidden overflow-y-auto"
       style={{ backgroundColor: '#F5F5F5' }}
     >
-      {/* 상단 로고 - margin: 31px 53.3px 65.6px 24px */}
+      {/* 상단 로고 */}
       <div
         style={{
           marginTop: '31px',

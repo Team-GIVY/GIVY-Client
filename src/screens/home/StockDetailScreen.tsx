@@ -59,7 +59,8 @@ function StockDetailScreen({
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#F5F5F5',
         display: 'flex',
         flexDirection: 'column',
@@ -74,13 +75,15 @@ function StockDetailScreen({
         <div
           className="ticket-card"
           style={{
-            width: '345px',
+            width: '100%',
+            maxWidth: '353px',
             margin: '23px auto 20px auto',
             padding: '12px 23px 16px 18px',
             borderRadius: '16px',
             backgroundColor: '#FFFFFF',
             boxShadow: '0 0 20px 0 rgba(0, 0, 0, 0.05)',
             position: 'relative',
+            boxSizing: 'border-box',
           }}
         >
           {/* 왼쪽 원형 커팅 (Ellipse-27) */}
@@ -190,22 +193,23 @@ function StockDetailScreen({
           <div
             style={{
               display: 'flex',
-              justifyContent: 'flex-start',
+              justifyContent: 'space-between',
               alignItems: 'flex-start',
               paddingLeft: '32px',
+              gap: '8px',
             }}
           >
-            {/* 상품코드 */}
-            <div style={{ textAlign: 'left', marginRight: '40px' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <p
                 style={{
                   margin: '0',
                   fontFamily: 'Pretendard',
-                  fontSize: '13px',
+                  fontSize: '11px',
                   fontWeight: 500,
                   lineHeight: 1.5,
                   letterSpacing: '-0.12px',
                   color: '#a9a9a9',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 상품코드
@@ -214,26 +218,29 @@ function StockDetailScreen({
                 style={{
                   margin: '2px 0 0 0',
                   fontFamily: 'Pretendard',
-                  fontSize: '15px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   color: '#252525',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
                 {stockInfo.ticker}
               </p>
             </div>
 
-            {/* 증권계좌 (중앙) */}
-            <div style={{ textAlign: 'left' }}>
+            <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
               <p
                 style={{
                   margin: '0',
                   fontFamily: 'Pretendard',
-                  fontSize: '13px',
+                  fontSize: '11px',
                   fontWeight: 500,
                   lineHeight: 1.5,
                   letterSpacing: '-0.12px',
                   color: '#a9a9a9',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 증권계좌
@@ -242,26 +249,29 @@ function StockDetailScreen({
                 style={{
                   margin: '2px 0 0 0',
                   fontFamily: 'Pretendard',
-                  fontSize: '15px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   color: '#252525',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
                 {stockInfo.brokerage}
               </p>
             </div>
 
-            {/* 예상 투자금 */}
-            <div style={{ textAlign: 'left', marginLeft: '40px' }}>
+            <div style={{ flex: 1, minWidth: 0, textAlign: 'right' }}>
               <p
                 style={{
                   margin: '0',
                   fontFamily: 'Pretendard',
-                  fontSize: '13px',
+                  fontSize: '11px',
                   fontWeight: 500,
                   lineHeight: 1.5,
                   letterSpacing: '-0.12px',
                   color: '#a9a9a9',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 예상 투자금
@@ -270,9 +280,12 @@ function StockDetailScreen({
                 style={{
                   margin: '2px 0 0 0',
                   fontFamily: 'Pretendard',
-                  fontSize: '15px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   color: '#252525',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
                 {stockInfo.expectedAmount.toLocaleString()}원

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import googleIcon from '../../assets/images/svg/ic_google.svg';
 import kakaoIcon from '../../assets/images/svg/ic_kakao.svg';
 import appleIcon from '../../assets/images/svg/ic_apple.svg';
+import givyLogo from '../../assets/images/png/img_logo_givy_symbol.png';
 // TODO: 네이버 아이콘 추가 시 아래 주석 해제
 // import naverIcon from '../../assets/images/svg/ic_naver.svg';
 
@@ -18,6 +19,7 @@ interface EmailEditScreenProps {
   onBack?: () => void;
   onAddEmail?: () => void;
   onSelectEmail?: (id: string) => void;
+  userEmail?: string;
 }
 
 // 소셜 로그인 프로바이더 설정
@@ -49,13 +51,16 @@ const providerConfig: Record<string, { name: string; icon: string | null; bgColo
   },
 };
 
-function EmailEditScreen({ onBack, onAddEmail, onSelectEmail }: EmailEditScreenProps) {
-  // 이메일 목록 (실제로는 props나 API에서 가져올 수 있음)
+function EmailEditScreen({ onBack, onAddEmail, onSelectEmail, userEmail }: EmailEditScreenProps) {
+  // 로그인된 이메일 가져오기
+  const currentEmail = userEmail || localStorage.getItem('loginEmail') || 'givy123@email.com';
+  const currentProvider = (localStorage.getItem('loginProvider') || 'email') as EmailItem['provider'];
+
   const [emails] = useState<EmailItem[]>([
     {
       id: '1',
-      email: 'givy123@email.com',
-      provider: 'naver',
+      email: currentEmail,
+      provider: currentProvider,
       isDefault: true,
     },
   ]);
@@ -85,38 +90,62 @@ function EmailEditScreen({ onBack, onAddEmail, onSelectEmail }: EmailEditScreenP
     }
   };
 
-  // 네이버 아이콘 플레이스홀더 (아이콘 없을 때 N 텍스트로 표시)
-  const renderProviderIcon = (provider: string) => {
-    const config = providerConfig[provider];
+  // 이메일 도메인에서 로고 결정
+  const getEmailDomainIcon = (email: string): { icon: string | null; bgColor: string; label: string } => {
+    const domain = email.split('@')[1]?.toLowerCase() || '';
+    if (domain.includes('naver')) return { icon: null, bgColor: '#03C75A', label: 'N' };
+    if (domain.includes('google') || domain.includes('gmail')) return { icon: googleIcon, bgColor: '#FFFFFF', label: '' };
+    if (domain.includes('kakao') || domain.includes('daum')) return { icon: kakaoIcon, bgColor: '#FEE500', label: '' };
+    if (domain.includes('apple') || domain.includes('icloud')) return { icon: appleIcon, bgColor: '#000000', label: '' };
+    return { icon: givyLogo, bgColor: '#FFFFFF', label: '' };
+  };
 
-    if (provider === 'naver') {
-      // 네이버는 아이콘이 없으므로 N 텍스트로 표시
+  const renderProviderIcon = (provider: string, email?: string) => {
+    // 이메일 주소가 있으면 도메인 기반으로 아이콘 결정
+    const domainInfo = email ? getEmailDomainIcon(email) : null;
+    const config = domainInfo || providerConfig[provider] || providerConfig['email'];
+
+    if (domainInfo) {
+      if (domainInfo.label) {
+        // 텍스트 아이콘 (네이버 N)
+        return (
+          <div
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: domainInfo.bgColor,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <span style={{ fontFamily: 'Pretendard', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' }}>
+              {domainInfo.label}
+            </span>
+          </div>
+        );
+      }
+      // 이미지 아이콘
       return (
         <div
           style={{
             width: '48px',
             height: '48px',
             borderRadius: '50%',
-            backgroundColor: config.bgColor,
+            backgroundColor: domainInfo.bgColor,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            border: domainInfo.bgColor === '#FFFFFF' ? '1px solid #E5E5E5' : 'none',
           }}
         >
-          <span
-            style={{
-              fontFamily: 'Pretendard',
-              fontSize: '24px',
-              fontWeight: 'bold',
-              color: '#FFFFFF',
-            }}
-          >
-            N
-          </span>
+          <img src={domainInfo.icon!} alt="" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
         </div>
       );
     }
 
+    // 폴백: provider 기반
     if (config.icon) {
       return (
         <div
@@ -131,41 +160,26 @@ function EmailEditScreen({ onBack, onAddEmail, onSelectEmail }: EmailEditScreenP
             border: provider === 'google' ? '1px solid #E5E5E5' : 'none',
           }}
         >
-          <img
-            src={config.icon}
-            alt={config.name}
-            style={{
-              width: '24px',
-              height: '24px',
-            }}
-          />
+          <img src={config.icon} alt={config.name} style={{ width: '24px', height: '24px' }} />
         </div>
       );
     }
 
-    // 기본 이메일 아이콘
+    // 기본: GIVY 로고
     return (
       <div
         style={{
           width: '48px',
           height: '48px',
           borderRadius: '50%',
-          backgroundColor: config.bgColor,
+          backgroundColor: '#FFFFFF',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          border: '1px solid #E5E5E5',
         }}
       >
-        <span
-          style={{
-            fontFamily: 'Pretendard',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            color: '#FFFFFF',
-          }}
-        >
-          @
-        </span>
+        <img src={givyLogo} alt="GIVY" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
       </div>
     );
   };
@@ -178,7 +192,8 @@ function EmailEditScreen({ onBack, onAddEmail, onSelectEmail }: EmailEditScreenP
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#F5F5F5',
         display: 'flex',
         flexDirection: 'column',
@@ -299,7 +314,7 @@ function EmailEditScreen({ onBack, onAddEmail, onSelectEmail }: EmailEditScreenP
               />
 
               {/* 프로바이더 아이콘 */}
-              {renderProviderIcon(item.provider)}
+              {renderProviderIcon(item.provider, item.email)}
 
               {/* 이메일 정보 */}
               <div

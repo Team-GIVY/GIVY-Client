@@ -63,17 +63,6 @@ function OptionCard({ optionId, optionText, isSelected, onSelect, isLast }: Opti
         )}
       </div>
 
-      <div
-        className="image-placeholder"
-        style={{
-          width: '60px',
-          height: '40px',
-          marginBottom: '8px',
-          backgroundColor: isSelected ? '#C2C7FC' : '#C6C6C6',
-          borderRadius: '4px'
-        }}
-      />
-
       <p
         className="option-text"
         style={{
@@ -84,6 +73,7 @@ function OptionCard({ optionId, optionText, isSelected, onSelect, isLast }: Opti
           letterSpacing: '-0.14px',
           color: '#393939',
           margin: 0,
+          marginTop: 'auto',
           textAlign: 'left'
         }}
       >

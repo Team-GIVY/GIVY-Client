@@ -103,7 +103,8 @@ function HomeScreen({
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#F5F5F5',
         display: 'flex',
         flexDirection: 'column',
@@ -119,11 +120,13 @@ function HomeScreen({
         <div
           style={{
             margin: '16px auto',
-            width: '345px',
+            width: '100%',
+            maxWidth: '353px',
             padding: '16px 20px',
             backgroundColor: '#FFFFFF',
             borderRadius: '16px',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+            boxSizing: 'border-box',
           }}
         >
           {/* 도착지 라벨 */}
@@ -215,29 +218,30 @@ function HomeScreen({
             style={{
               display: 'flex',
               justifyContent: 'space-between',
+              gap: '8px',
             }}
           >
-            <div>
-              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '11px', color: '#a9a9a9' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '11px', color: '#a9a9a9', whiteSpace: 'nowrap' }}>
                 상품코드
               </p>
-              <p style={{ margin: '2px 0 0 0', fontFamily: 'Pretendard', fontSize: '14px', fontWeight: 'bold', color: '#252525' }}>
+              <p style={{ margin: '2px 0 0 0', fontFamily: 'Pretendard', fontSize: '12px', fontWeight: 'bold', color: '#252525', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {stockCode}
               </p>
             </div>
-            <div>
-              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '11px', color: '#a9a9a9' }}>
+            <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
+              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '11px', color: '#a9a9a9', whiteSpace: 'nowrap' }}>
                 증권계좌
               </p>
-              <p style={{ margin: '2px 0 0 0', fontFamily: 'Pretendard', fontSize: '14px', fontWeight: 'bold', color: '#252525' }}>
+              <p style={{ margin: '2px 0 0 0', fontFamily: 'Pretendard', fontSize: '12px', fontWeight: 'bold', color: '#252525', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {brokerageAccount}
               </p>
             </div>
-            <div>
-              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '11px', color: '#a9a9a9' }}>
+            <div style={{ flex: 1, minWidth: 0, textAlign: 'right' }}>
+              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '11px', color: '#a9a9a9', whiteSpace: 'nowrap' }}>
                 예상 투자금
               </p>
-              <p style={{ margin: '2px 0 0 0', fontFamily: 'Pretendard', fontSize: '14px', fontWeight: 'bold', color: '#252525' }}>
+              <p style={{ margin: '2px 0 0 0', fontFamily: 'Pretendard', fontSize: '12px', fontWeight: 'bold', color: '#252525', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {expectedInvestment}
               </p>
             </div>
@@ -248,11 +252,13 @@ function HomeScreen({
         <div
           style={{
             margin: '0 auto 16px auto',
-            width: '345px',
+            width: '100%',
+            maxWidth: '353px',
             padding: '20px',
             backgroundColor: '#FFFFFF',
             borderRadius: '16px',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+            boxSizing: 'border-box',
           }}
         >
           {/* 상단: NASDAQ 라벨 + ETF 이름 + 새로고침 버튼 */}
@@ -378,21 +384,22 @@ function HomeScreen({
             style={{
               display: 'flex',
               justifyContent: 'space-around',
+              gap: '8px',
             }}
           >
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '12px', color: '#a9a9a9' }}>
+            <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
+              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '11px', color: '#a9a9a9', whiteSpace: 'nowrap' }}>
                 최대 상승 시
               </p>
-              <p style={{ margin: '4px 0 0 0', fontFamily: 'Pretendard', fontSize: '16px', fontWeight: 'bold', color: '#252525' }}>
+              <p style={{ margin: '4px 0 0 0', fontFamily: 'Pretendard', fontSize: '12px', fontWeight: 'bold', color: '#252525', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {maxUp}
               </p>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '12px', color: '#a9a9a9' }}>
+            <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
+              <p style={{ margin: 0, fontFamily: 'Pretendard', fontSize: '11px', color: '#a9a9a9', whiteSpace: 'nowrap' }}>
                 최대 하락 시
               </p>
-              <p style={{ margin: '4px 0 0 0', fontFamily: 'Pretendard', fontSize: '16px', fontWeight: 'bold', color: '#252525' }}>
+              <p style={{ margin: '4px 0 0 0', fontFamily: 'Pretendard', fontSize: '12px', fontWeight: 'bold', color: '#252525', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {maxDown}
               </p>
             </div>

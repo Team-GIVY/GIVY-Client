@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Logo, Character } from '../../components/common';
 import { authApi } from '../../api';
 import emailIcon from '../../assets/images/svg/ic_email.svg';
@@ -71,21 +71,44 @@ function EmailLoginScreen({
     }
   };
 
+  const handleGoogleLogin = useCallback(() => {
+    console.log('Google 로그인 시도 (GIS)');
+    if (!window.google?.accounts?.id) {
+      alert('Google 로그인 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: async (response: { credential: string }) => {
+        try {
+          await authApi.googleIdTokenLogin(response.credential);
+          onSocialLogin?.('google');
+        } catch (err) {
+          console.error('구글 로그인 실패:', err);
+          alert('구글 로그인에 실패했습니다.');
+        }
+      },
+    });
+    window.google.accounts.id.prompt();
+  }, [onSocialLogin]);
+
   const handleSocialLogin = (provider: 'kakao' | 'google' | 'apple') => {
     if (provider === 'kakao') {
       authApi.redirectToKakaoLogin();
+      onSocialLogin?.(provider);
     } else if (provider === 'google') {
-      authApi.redirectToGoogleLogin();
+      handleGoogleLogin();
+      // onSocialLogin은 handleGoogleLogin 콜백 내부에서 호출
     } else {
       // Apple 로그인은 아직 미구현
       alert('Apple 로그인은 준비 중입니다.');
     }
-    onSocialLogin?.(provider);
   };
 
   return (
     <div
-      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-hidden"
+      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-x-hidden overflow-y-auto"
       style={{ backgroundColor: '#F5F5F5' }}
     >
       {/* 상단 뒤로가기 버튼 - margin: 23px 130px 0 24px */}

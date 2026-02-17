@@ -35,13 +35,16 @@ const brokerageList: Brokerage[] = [
 function BrokerageSettingsScreen({
   onBack,
   onSelect,
-  selectedBrokerage = 'toss',
+  selectedBrokerage,
 }: BrokerageSettingsScreenProps) {
-  const [selected, setSelected] = useState<string>(selectedBrokerage);
+  const initialId =
+    brokerageList.find((b) => b.name === selectedBrokerage)?.id ?? 'toss';
+  const [selected, setSelected] = useState<string>(initialId);
 
   const handleSelect = (id: string) => {
     setSelected(id);
-    onSelect?.(id);
+    const name = brokerageList.find((b) => b.id === id)?.name ?? id;
+    onSelect?.(name);
   };
 
   return (
@@ -52,7 +55,8 @@ function BrokerageSettingsScreen({
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#F5F5F5',
         display: 'flex',
         flexDirection: 'column',

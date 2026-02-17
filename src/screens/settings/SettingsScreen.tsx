@@ -123,7 +123,8 @@ function SettingsScreen({
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#F5F5F5',
         display: 'flex',
         flexDirection: 'column',
@@ -186,7 +187,8 @@ function SettingsScreen({
         {/* 현재 매수 중인 상품 카드 (티켓 형태) */}
         <div
           style={{
-            width: '345px',
+            width: '100%',
+            maxWidth: '353px',
             height: '140px',
             margin: '0 auto 24px auto',
             position: 'relative',
@@ -280,21 +282,23 @@ function SettingsScreen({
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'flex-start',
+                justifyContent: 'space-between',
                 alignItems: 'flex-start',
                 paddingLeft: '32px',
+                gap: '8px',
               }}
             >
-              <div style={{ textAlign: 'left', marginRight: '40px' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <p
                   style={{
                     margin: 0,
                     fontFamily: 'Pretendard',
-                    fontSize: '13px',
+                    fontSize: '11px',
                     fontWeight: 500,
                     lineHeight: 1.5,
                     letterSpacing: '-0.12px',
                     color: '#e0e0e0',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   상품코드
@@ -303,24 +307,28 @@ function SettingsScreen({
                   style={{
                     margin: '2px 0 0 0',
                     fontFamily: 'Pretendard',
-                    fontSize: '15px',
+                    fontSize: '12px',
                     fontWeight: 'bold',
                     color: '#ffffff',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   {productCode}
                 </p>
               </div>
-              <div style={{ textAlign: 'left' }}>
+              <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
                 <p
                   style={{
                     margin: 0,
                     fontFamily: 'Pretendard',
-                    fontSize: '13px',
+                    fontSize: '11px',
                     fontWeight: 500,
                     lineHeight: 1.5,
                     letterSpacing: '-0.12px',
                     color: '#e0e0e0',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   증권계좌
@@ -329,24 +337,28 @@ function SettingsScreen({
                   style={{
                     margin: '2px 0 0 0',
                     fontFamily: 'Pretendard',
-                    fontSize: '15px',
+                    fontSize: '12px',
                     fontWeight: 'bold',
                     color: '#ffffff',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   {brokerName}
                 </p>
               </div>
-              <div style={{ textAlign: 'left', marginLeft: '40px' }}>
+              <div style={{ flex: 1, minWidth: 0, textAlign: 'right' }}>
                 <p
                   style={{
                     margin: 0,
                     fontFamily: 'Pretendard',
-                    fontSize: '13px',
+                    fontSize: '11px',
                     fontWeight: 500,
                     lineHeight: 1.5,
                     letterSpacing: '-0.12px',
                     color: '#e0e0e0',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   예상 투자금
@@ -355,9 +367,12 @@ function SettingsScreen({
                   style={{
                     margin: '2px 0 0 0',
                     fontFamily: 'Pretendard',
-                    fontSize: '15px',
+                    fontSize: '12px',
                     fontWeight: 'bold',
                     color: '#ffffff',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   {expectedInvestment}

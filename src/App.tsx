@@ -6,10 +6,13 @@ import { StartChallengeScreen, StartChallengeAgeScreen, StartChallengeYouthScree
 import { HomeScreen, HomeCheckInScreen, StockDetailScreen } from './screens/home';
 import { GuideScreen, GuideDetailScreen } from './screens/guide';
 import { NotificationScreen, NotificationSettingsScreen } from './screens/notification';
+import { LoadingScreen } from './screens/loading';
+import { FAQScreen } from './screens/faq';
 import { SettingsScreen, PurchaseHistoryScreen, BrokerageSettingsScreen, PersonalityRetestScreen, WishlistScreen, MyStampScreen, ProfileEditScreen, NicknameEditScreen, NameScreen, EmailEditScreen, PasswordChangeScreen, LinkedAccountScreen, LanguageScreen } from './screens/settings';
 import { UserProfileCard } from './components/profile';
 import { LogoutModal, WithdrawModal } from './components/common';
 import { authApi, homeApi, tendencyApi, challengeApi } from './api';
+import { getBuyHistoryList, deleteBuyHistory } from './api/buyHistory';
 import type { UserDetailDTO, ProductOverviewDTO, TendencyResultDTO, StartChallengeStatusDTO } from './api/types';
 // 스탬프 이미지
 import firstChallengeStamp from './assets/images/png/img_stamp_first-challenge.png';
@@ -151,6 +154,9 @@ function App() {
   const [showPasswordChange, setShowPasswordChange] = useState(initialScreen === 'passwordChange');
   const [showLinkedAccount, setShowLinkedAccount] = useState(initialScreen === 'linkedAccount');
   const [showLanguage, setShowLanguage] = useState(initialScreen === 'language');
+  const [showLoading, setShowLoading] = useState(initialScreen === 'loading');
+  const [showLoadingNoCard, setShowLoadingNoCard] = useState(initialScreen === 'loadingNoCard');
+  const [showFAQ, setShowFAQ] = useState(initialScreen === 'faq');
   const [showProfileCard, setShowProfileCard] = useState(false);
 
   // 회원가입 데이터 상태
@@ -183,35 +189,15 @@ function App() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [previousScreen, setPreviousScreen] = useState<string | null>(null);
-  const [purchaseHistoryData, setPurchaseHistoryData] = useState([
-    {
-      id: '1',
-      purchaseDate: '2025. 12. 23 매수',
-      productName: 'S&P 500',
-      productDestination: '미국 기술주',
-      productCode: '360750',
-      brokerName: '토스증권',
-      expectedInvestment: '50,000원',
-    },
-    {
-      id: '2',
-      purchaseDate: '2025. 12. 23 매수',
-      productName: 'S&P 500',
-      productDestination: '미국 기술주',
-      productCode: '360750',
-      brokerName: '토스증권',
-      expectedInvestment: '50,000원',
-    },
-    {
-      id: '3',
-      purchaseDate: '2025. 12. 23 매수',
-      productName: 'S&P 500',
-      productDestination: '미국 기술주',
-      productCode: '360750',
-      brokerName: '토스증권',
-      expectedInvestment: '50,000원',
-    },
-  ]);
+  const [purchaseHistoryData, setPurchaseHistoryData] = useState<{
+    id: string;
+    purchaseDate: string;
+    productName: string;
+    productDestination: string;
+    productCode: string;
+    brokerName: string;
+    expectedInvestment: string;
+  }[]>([]);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
@@ -239,6 +225,11 @@ function App() {
   // 사용자 정보 및 추천 상품 로드 함수
   const loadUserData = useCallback(async () => {
     console.log('[loadUserData] 시작');
+    let loadingShown = false;
+    const loadingTimer = setTimeout(() => {
+      loadingShown = true;
+      setShowLoading(true);
+    }, 2000);
     try {
       // 사용자 정보 조회
       console.log('[loadUserData] getMyInfo 호출...');
@@ -354,6 +345,11 @@ function App() {
       }
     } catch (err) {
       console.error('사용자 데이터 로드 실패:', err);
+    } finally {
+      clearTimeout(loadingTimer);
+      if (loadingShown) {
+        setShowLoading(false);
+      }
     }
   }, []);
 
@@ -992,8 +988,8 @@ function App() {
   };
 
   const handleEditProfile = () => {
-    console.log('회원정보 수정 클릭');
-    // TODO: 회원정보 수정 화면으로 이동
+    setShowProfileCard(false);
+    handleProfileEdit();
   };
 
   const handleTabChange = (tab: 'home' | 'guide' | 'settings') => {
@@ -1064,11 +1060,30 @@ function App() {
   };
 
   // 매수 이력 핸들러
+  const fetchPurchaseHistory = useCallback(async () => {
+    try {
+      const data = await getBuyHistoryList();
+      const mapped = data.items.map((item) => ({
+        id: String(item.buyHistoryId),
+        purchaseDate: item.purchaseDate,
+        productName: item.productName,
+        productDestination: item.productDestination,
+        productCode: item.productCode,
+        brokerName: item.brokerName,
+        expectedInvestment: item.expectedInvestment,
+      }));
+      setPurchaseHistoryData(mapped);
+    } catch (err) {
+      console.error('매수 이력 조회 실패:', err);
+    }
+  }, []);
+
   const handlePurchaseHistory = () => {
     console.log('매수 이력 클릭');
     setShowSettings(false);
     setShowPurchaseHistory(true);
     localStorage.setItem('currentScreen', 'purchaseHistory');
+    fetchPurchaseHistory();
   };
 
   const handlePurchaseHistoryBack = () => {
@@ -1077,10 +1092,15 @@ function App() {
     localStorage.setItem('currentScreen', 'settings');
   };
 
-  const handlePurchaseDelete = (id: string) => {
+  const handlePurchaseDelete = async (id: string) => {
     console.log('매수 이력 삭제:', id);
-    setPurchaseHistoryData(prev => prev.filter(item => item.id !== id));
-    // TODO: 백엔드 API 호출하여 삭제 처리
+    try {
+      await deleteBuyHistory(Number(id));
+      setPurchaseHistoryData(prev => prev.filter(item => item.id !== id));
+    } catch (err) {
+      console.error('매수 이력 삭제 실패:', err);
+      setPurchaseHistoryData(prev => prev.filter(item => item.id !== id));
+    }
   };
 
   // 증권사 설정 핸들러
@@ -1097,9 +1117,10 @@ function App() {
     localStorage.setItem('currentScreen', 'settings');
   };
 
-  const handleBrokerageSelect = (brokerageId: string) => {
-    console.log('증권사 선택:', brokerageId);
-    // TODO: 백엔드 API 호출하여 증권사 설정 저장
+  const handleBrokerageSelect = (brokerageName: string) => {
+    console.log('증권사 선택:', brokerageName);
+    setSelectedBrokerage(brokerageName);
+    localStorage.setItem('selectedBrokerage', brokerageName);
   };
 
   // 관심 목록 핸들러
@@ -1707,6 +1728,7 @@ function App() {
             onWishlist={handleWishlist}
             onMyStamp={handleMyStamp}
             onProfileEdit={handleProfileEdit}
+            onTerms={() => window.open('https://www.notion.so/2d704a205af780328594eaecaee4fe78', '_blank')}
             userName={homeNickname || userInfo?.nickname || '기비'}
             productCode={selectedProduct?.code || recommendedProduct?.code}
             productName={selectedProduct?.name || recommendedProduct?.name}
@@ -1733,6 +1755,7 @@ function App() {
           <BrokerageSettingsScreen
             onBack={handleBrokerageSettingsBack}
             onSelect={handleBrokerageSelect}
+            selectedBrokerage={selectedBrokerage}
           />
         </div>
       )}
@@ -1822,6 +1845,7 @@ function App() {
             onBack={handleEmailEditBack}
             onAddEmail={handleAddEmail}
             onSelectEmail={handleSelectEmail}
+            userEmail={userInfo?.email}
           />
         </div>
       )}
@@ -1852,6 +1876,37 @@ function App() {
           <LanguageScreen
             onBack={handleLanguageBack}
             onComplete={handleLanguageComplete}
+          />
+        </div>
+      )}
+
+      {/* 로딩 화면 (카드 있음) */}
+      {showLoading && (
+        <div className="w-full h-screen animate-fadeIn">
+          <LoadingScreen withCard={true} />
+        </div>
+      )}
+
+      {/* 로딩 화면 (카드 없음) */}
+      {showLoadingNoCard && (
+        <div className="w-full h-screen animate-fadeIn">
+          <LoadingScreen withCard={false} />
+        </div>
+      )}
+
+      {/* F&Q 화면 */}
+      {showFAQ && (
+        <div className="w-full h-screen animate-fadeIn">
+          <FAQScreen
+            onBack={() => {
+              setShowFAQ(false);
+              localStorage.removeItem('currentScreen');
+            }}
+            onStartChallenge={() => {
+              setShowFAQ(false);
+              localStorage.removeItem('currentScreen');
+            }}
+            userName={homeNickname || userInfo?.nickname || '기비'}
           />
         </div>
       )}

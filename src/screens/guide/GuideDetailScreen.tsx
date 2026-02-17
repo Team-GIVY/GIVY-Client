@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { guideApi } from '../../api';
 import type { GuideDetailDTO } from '../../api/types';
+import heartOn from '../../assets/images/svg/ic_heart_on.svg';
+import heartOff from '../../assets/images/svg/ic_heart_off.svg';
+import bookmarkOn from '../../assets/images/svg/ic_bookmark_on.svg';
+import bookmarkOff from '../../assets/images/svg/ic_bookmark_off.svg';
+import talkIcon from '../../assets/images/svg/ic_talk.svg';
 
 interface GuideDetailScreenProps {
   guideId?: number;
@@ -73,7 +78,8 @@ function GuideDetailScreen({ guideId, onBack, onShare, onApply }: GuideDetailScr
         maxWidth: '402px',
         margin: '0 auto',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         backgroundColor: '#FFFFFF',
         display: 'flex',
         flexDirection: 'column',
@@ -256,110 +262,109 @@ function GuideDetailScreen({ guideId, onBack, onShare, onApply }: GuideDetailScr
       {/* 하단 인게이지먼트 바 */}
       <div
         style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '60px',
-          backgroundColor: '#FFFFFF',
-          borderTop: '1px solid #e0e0e0',
           display: 'flex',
-          alignItems: 'center',
           justifyContent: 'center',
-          gap: '40px',
-          padding: '0 20px',
+          padding: '0 0 40px 0',
         }}
       >
-        {/* 좋아요 */}
-        <button
-          onClick={handleLike}
+        <div
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
+            width: '191px',
+            height: '60px',
+            padding: '12px 22px 9.2px 31px',
+            borderRadius: '12px',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: 'solid 1px #e0e0e0',
+            backgroundColor: 'rgba(224, 224, 224, 0.6)',
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
-            gap: '2px',
+            justifyContent: 'space-between',
+            boxSizing: 'border-box',
           }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill={isLiked ? '#545fe8' : 'none'}>
-            <path
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-              stroke={isLiked ? '#545fe8' : '#a9a9a9'}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span
+          {/* 좋아요 */}
+          <button
+            onClick={handleLike}
             style={{
-              fontFamily: 'Pretendard',
-              fontSize: '12px',
-              fontWeight: 500,
-              color: isLiked ? '#545fe8' : '#a9a9a9',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2px',
+              padding: 0,
             }}
           >
-            {likeCount}
-          </span>
-        </button>
-
-        {/* 댓글 */}
-        <button
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '2px',
-          }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
-              stroke="#a9a9a9"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <img
+              src={isLiked ? heartOn : heartOff}
+              alt="좋아요"
+              style={{ width: '24px', height: '24px' }}
             />
-          </svg>
-          <span
+            <span
+              style={{
+                fontFamily: 'Pretendard',
+                fontSize: '10px',
+                fontWeight: 500,
+                color: isLiked ? '#545fe8' : '#a9a9a9',
+              }}
+            >
+              {likeCount}
+            </span>
+          </button>
+
+          {/* 댓글 */}
+          <button
             style={{
-              fontFamily: 'Pretendard',
-              fontSize: '12px',
-              fontWeight: 500,
-              color: '#a9a9a9',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2px',
+              padding: 0,
             }}
           >
-            0
-          </span>
-        </button>
-
-        {/* 북마크 */}
-        <button
-          onClick={handleBookmark}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '2px',
-          }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill={isBookmarked ? '#545fe8' : 'none'}>
-            <path
-              d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"
-              stroke={isBookmarked ? '#545fe8' : '#a9a9a9'}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <img
+              src={talkIcon}
+              alt="댓글"
+              style={{ width: '24px', height: '24px' }}
             />
-          </svg>
-        </button>
+            <span
+              style={{
+                fontFamily: 'Pretendard',
+                fontSize: '10px',
+                fontWeight: 500,
+                color: '#a9a9a9',
+              }}
+            >
+              0
+            </span>
+          </button>
+
+          {/* 북마크 */}
+          <button
+            onClick={handleBookmark}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2px',
+              padding: 0,
+            }}
+          >
+            <img
+              src={isBookmarked ? bookmarkOn : bookmarkOff}
+              alt="북마크"
+              style={{ width: '24px', height: '24px' }}
+            />
+          </button>
+        </div>
       </div>
     </div>
   );

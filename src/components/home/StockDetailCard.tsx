@@ -2,6 +2,7 @@ import { useState } from 'react';
 import changeCircleOn from '../../assets/images/svg/ic_change-circle_on.svg';
 import changeCircleOff from '../../assets/images/svg/ic_change-circle_off.svg';
 import flightIcon from '../../assets/images/svg/ic_flight_color.svg';
+import bgFlight from '../../assets/images/png/bg_flight.png';
 import { ResponsiveContainer, AreaChart, Area, Line } from 'recharts';
 
 // Stock Info 타입 정의
@@ -45,8 +46,8 @@ function StockDetailCard({ stockInfo }: StockDetailCardProps) {
     return months.map((date, i) => {
       const t = i / 11;
       // 주가: 급등락이 뚜렷한 곡선 (상승 추세 + 큰 변동)
-      const value = base + t * rate * base * 1.5
-        + Math.sin(i * 1.6) * 10 + Math.cos(i * 0.8) * 6 + Math.sin(i * 3) * 3;
+      const value = base + t * rate * base * 3
+        + Math.sin(i * 1.6) * 50 + Math.cos(i * 0.8) * 32 + Math.sin(i * 3) * 22 + Math.cos(i * 2.2) * 15;
       // 벤치마크: 거의 직선에 가까운 완만한 곡선
       const benchmark = base + t * rate * base * 0.15 + Math.sin(i * 0.4) * 1;
       return { date, value: +value.toFixed(1), benchmark: +benchmark.toFixed(1) };
@@ -168,33 +169,22 @@ function StockDetailCard({ stockInfo }: StockDetailCardProps) {
               overflow: 'hidden',
             }}
           >
-            {/* 배경 비행기 아이콘 */}
-            <div
+            {/* 배경 비행기 */}
+            <img
+              src={bgFlight}
+              alt=""
               style={{
                 position: 'absolute',
-                left: '-20px',
-                bottom: '-20px',
-                width: '180px',
-                height: '180px',
-                background: 'rgba(242, 243, 250, 0.7)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                left: '50%',
+                top: '60%',
+                transform: 'translate(-50%, -50%)',
+                width: '280px',
+                height: '280px',
+                objectFit: 'contain',
+                mixBlendMode: 'multiply',
                 pointerEvents: 'none',
               }}
-            >
-              <img
-                src={flightIcon}
-                alt=""
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  opacity: 0.5,
-                  transform: 'rotate(-45deg)',
-                }}
-              />
-            </div>
+            />
             {/* 설명 타이틀 */}
             <p
               style={{
@@ -363,19 +353,19 @@ function StockDetailCard({ stockInfo }: StockDetailCardProps) {
                   </linearGradient>
                 </defs>
                 <Area
-                  type="monotone"
+                  type="linear"
                   dataKey="value"
                   stroke="#545fe8"
-                  strokeWidth={2}
+                  strokeWidth={1}
                   fill={`url(#chartGrad-${stockInfo.ticker})`}
                   dot={false}
                   activeDot={false}
                 />
                 <Line
-                  type="monotone"
+                  type="linear"
                   dataKey="benchmark"
                   stroke="#d0d0d0"
-                  strokeWidth={1.5}
+                  strokeWidth={0.8}
                   dot={false}
                   activeDot={false}
                 />
