@@ -46,7 +46,6 @@ const labelToGauge: Record<string, number> = {
   '낮음': 25,
   '보통': 55,
   '높음': 80,
-  '공격형': 85,
 };
 
 function PersonalityTestResultScreen({

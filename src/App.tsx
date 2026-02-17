@@ -155,7 +155,7 @@ function App() {
   const [showLinkedAccount, setShowLinkedAccount] = useState(initialScreen === 'linkedAccount');
   const [showLanguage, setShowLanguage] = useState(initialScreen === 'language');
   const [showLoading, setShowLoading] = useState(initialScreen === 'loading');
-  const [showLoadingNoCard, setShowLoadingNoCard] = useState(initialScreen === 'loadingNoCard');
+  const [showLoadingNoCard] = useState(initialScreen === 'loadingNoCard');
   const [showFAQ, setShowFAQ] = useState(initialScreen === 'faq');
   const [showProfileCard, setShowProfileCard] = useState(false);
 

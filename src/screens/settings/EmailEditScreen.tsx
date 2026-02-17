@@ -160,7 +160,7 @@ function EmailEditScreen({ onBack, onAddEmail, onSelectEmail, userEmail }: Email
             border: provider === 'google' ? '1px solid #E5E5E5' : 'none',
           }}
         >
-          <img src={config.icon} alt={config.name} style={{ width: '24px', height: '24px' }} />
+          <img src={config.icon} alt="" style={{ width: '24px', height: '24px' }} />
         </div>
       );
     }

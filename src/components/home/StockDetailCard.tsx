@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import changeCircleOn from '../../assets/images/svg/ic_change-circle_on.svg';
 import changeCircleOff from '../../assets/images/svg/ic_change-circle_off.svg';
-import flightIcon from '../../assets/images/svg/ic_flight_color.svg';
+
 import bgFlight from '../../assets/images/png/bg_flight.png';
 import { ResponsiveContainer, AreaChart, Area, Line } from 'recharts';
 
