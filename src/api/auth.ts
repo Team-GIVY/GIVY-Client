@@ -137,9 +137,9 @@ export const refreshToken = async (token: string): Promise<UserTokenRefreshResDT
   return response.data.result;
 };
 
-// 카카오 로그인 URL로 리다이렉트
+// 카카오 로그인 URL로 리다이렉트 (Netlify 프록시 경유)
 export const redirectToKakaoLogin = (): void => {
-  window.location.href = 'http://43.202.26.68:8080/oauth/kakao/login';
+  window.location.href = window.location.origin + '/api/oauth/kakao/login';
 };
 
 // 구글 ID 토큰으로 로그인 (Google Identity Services 방식)
