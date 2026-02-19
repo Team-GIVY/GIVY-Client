@@ -160,11 +160,12 @@ function StockDetailCard({ stockInfo }: StockDetailCardProps) {
             className="detail-card-bottom"
             style={{
               flex: 1,
-              padding: '30px 22px 40px 22px',
+              padding: '0px 22px 40px 22px',
               background: 'linear-gradient(to bottom, #FFFFFF 0%, #E8EAFF 30%, #DEE0FA 100%)',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
+              paddingTop: '108px',
               position: 'relative',
               overflow: 'hidden',
             }}
@@ -195,7 +196,7 @@ function StockDetailCard({ stockInfo }: StockDetailCardProps) {
                 letterSpacing: '-0.14px',
                 textAlign: 'center',
                 color: '#252525',
-                margin: '0 0 16px 0',
+                margin: '0 0 4px 0',
               }}
             >
               {stockInfo.descriptionTitle}
@@ -206,7 +207,7 @@ function StockDetailCard({ stockInfo }: StockDetailCardProps) {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '20px',
+                gap: '0px',
               }}
             >
               {stockInfo.descriptionBody.map((text, index) => (

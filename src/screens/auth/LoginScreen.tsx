@@ -4,7 +4,6 @@ import kakaoIcon from '../../assets/images/svg/ic_kakao.svg';
 import googleIcon from '../../assets/images/svg/ic_google.svg';
 import appleIcon from '../../assets/images/svg/ic_apple.svg';
 import { Logo } from '../../components/common';
-
 // Google Identity Services 타입 선언
 declare global {
   interface Window {
@@ -75,8 +74,17 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
     window.google.accounts.id.prompt();
   }, [onSocialLogin]);
 
+  const handleKakaoLogin = useCallback(() => {
+    console.log('카카오 로그인 시도 - 카카오 OAuth 페이지로 리다이렉트');
+    authApi.redirectToKakaoLogin();
+  }, []);
+
   const handleSocialLogin = (provider: 'kakao' | 'google' | 'apple') => {
     console.log(`${provider} 로그인 시도`);
+    if (provider === 'kakao') {
+      handleKakaoLogin();
+      return;
+    }
     if (provider === 'google') {
       handleGoogleLogin();
       return;
@@ -142,7 +150,7 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
             letterSpacing: '-0.16px',
             textAlign: 'left',
             color: '#8D8D8D',
-            marginBottom: '230px'
+            marginBottom: '200px'
           }}
         >
           3초 가입으로 바로 시작해보세요.

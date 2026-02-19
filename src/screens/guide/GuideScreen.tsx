@@ -8,28 +8,28 @@ interface GuideScreenProps {
   onDetailClick?: (guideId: number) => void;
 }
 
-// 기본 가이드 카드 데이터 (API 실패 시 폴백)
+// 기본 가이드 카드 데이터 (하드코딩)
 const defaultGuideCards = [
   {
     id: 1,
-    title: '혹시 아직도\n내 돈으로만 투자하세요?',
-    description: '증권사 계좌 개설만으로 받는 꽁돈으로\n실제 투자를 경험해 보세요!',
-    characterType: 'coin' as const,
-    characterVariant: 'question' as const,
-  },
-  {
-    id: 2,
-    title: '투자, 어렵게\n생각하지 마세요',
-    description: '기비와 함께라면\n누구나 쉽게 시작할 수 있어요!',
+    title: '세금 낼 돈 아껴서\n공짜 치킨 드세요!',
+    description: '#절세꿀팁 #필수통장 #13월의월급',
     characterType: 'coin' as const,
     characterVariant: 'default' as const,
   },
   {
-    id: 3,
-    title: '매일 체크인하고\n투자 습관을 만들어요',
-    description: '꾸준한 체크인으로\n나만의 투자 루틴을 만들어보세요!',
+    id: 2,
+    title: '월급 들어오면 바로\n이렇게 나눠보세요!',
+    description: '#월급관리 #통장쪼개기 #재테크기초',
     characterType: 'coin' as const,
     characterVariant: 'exclamation' as const,
+  },
+  {
+    id: 3,
+    title: 'ETF가 뭔데 다들\n사라고 하는 걸까?',
+    description: '#ETF입문 #분산투자 #초보추천',
+    characterType: 'coin' as const,
+    characterVariant: 'question' as const,
   },
 ];
 

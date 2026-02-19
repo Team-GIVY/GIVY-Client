@@ -2,14 +2,28 @@ import { useState, useEffect, useCallback } from 'react';
 import { getFCMToken, onForegroundMessage } from '../utils/firebase';
 import { notificationApi } from '../api';
 
+interface ToastData {
+  id: number;
+  title: string;
+  body: string;
+  targetType?: string;
+  targetId?: string;
+}
+
 interface UsePushNotificationReturn {
   isSupported: boolean;
   isPermissionGranted: boolean;
   fcmToken: string | null;
   isLoading: boolean;
   error: string | null;
+  toasts: ToastData[];
   requestPermission: () => Promise<boolean>;
+  removeToast: (id: number) => void;
+  // [DEV] 테스트용 - 배포 시 제거
+  addTestToast: (title: string, body: string, targetType?: string, targetId?: string) => void;
 }
+
+let toastIdCounter = 0;
 
 export const usePushNotification = (): UsePushNotificationReturn => {
   const [isSupported, setIsSupported] = useState(false);
@@ -17,6 +31,7 @@ export const usePushNotification = (): UsePushNotificationReturn => {
   const [fcmToken, setFcmToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [toasts, setToasts] = useState<ToastData[]>([]);
 
   // 브라우저 지원 여부 확인
   useEffect(() => {
@@ -28,19 +43,34 @@ export const usePushNotification = (): UsePushNotificationReturn => {
     }
   }, []);
 
+  const removeToast = useCallback((id: number) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  // [DEV] 테스트용 토스트 추가 - 배포 시 제거
+  const addTestToast = useCallback((title: string, body: string, targetType?: string, targetId?: string) => {
+    const id = ++toastIdCounter;
+    setToasts((prev) => [...prev, { id, title, body, targetType, targetId }]);
+  }, []);
+
   // 포그라운드 메시지 리스너 설정
   useEffect(() => {
     if (!isPermissionGranted) return;
 
     const unsubscribe = onForegroundMessage((payload) => {
-      // 포그라운드에서 알림 표시
-      const notification = payload as { notification?: { title?: string; body?: string } };
-      if (notification.notification) {
-        new Notification(notification.notification.title || '새 알림', {
-          body: notification.notification.body || '',
-          icon: '/icon-192x192.png',
-        });
-      }
+      const msg = payload as {
+        notification?: { title?: string; body?: string };
+        data?: { targetType?: string; targetId?: string };
+      };
+
+      const title = msg.notification?.title || '새 알림';
+      const body = msg.notification?.body || '';
+      const targetType = msg.data?.targetType;
+      const targetId = msg.data?.targetId;
+
+      // 커스텀 토스트 추가
+      const id = ++toastIdCounter;
+      setToasts((prev) => [...prev, { id, title, body, targetType, targetId }]);
     });
 
     return () => {
@@ -73,13 +103,18 @@ export const usePushNotification = (): UsePushNotificationReturn => {
       setFcmToken(token);
       setIsPermissionGranted(true);
 
-      // 백엔드에 토큰 등록
-      try {
-        await notificationApi.registerDeviceToken(token);
-        console.log('[Push] 토큰 서버 등록 완료');
-      } catch (err) {
-        console.error('[Push] 토큰 서버 등록 실패:', err);
-        // 서버 등록 실패해도 로컬에서는 동작
+      // 백엔드에 토큰 등록 (로그인 상태일 때만)
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
+        try {
+          await notificationApi.registerDeviceToken(token);
+          console.log('[Push] 토큰 서버 등록 완료');
+        } catch {
+          // 401 등 인증 실패 시 무시 (로그인 갱신 후 재시도됨)
+          console.log('[Push] 토큰 서버 등록 실패 - 다음 로그인 시 재시도');
+        }
+      } else {
+        console.log('[Push] 로그인 전이라 서버 등록 건너뜀');
       }
 
       return true;
@@ -98,7 +133,10 @@ export const usePushNotification = (): UsePushNotificationReturn => {
     fcmToken,
     isLoading,
     error,
+    toasts,
     requestPermission,
+    removeToast,
+    addTestToast,
   };
 };
 

@@ -11,6 +11,8 @@ import { FAQScreen } from './screens/faq';
 import { SettingsScreen, PurchaseHistoryScreen, BrokerageSettingsScreen, PersonalityRetestScreen, WishlistScreen, MyStampScreen, ProfileEditScreen, NicknameEditScreen, NameScreen, EmailEditScreen, PasswordChangeScreen, LinkedAccountScreen, LanguageScreen } from './screens/settings';
 import { UserProfileCard } from './components/profile';
 import { LogoutModal, WithdrawModal } from './components/common';
+import NotificationToast from './components/common/NotificationToast';
+import { usePushNotification } from './hooks/usePushNotification';
 import { authApi, homeApi, tendencyApi, challengeApi } from './api';
 import { getBuyHistoryList, deleteBuyHistory } from './api/buyHistory';
 import type { UserDetailDTO, ProductOverviewDTO, TendencyResultDTO, StartChallengeStatusDTO } from './api/types';
@@ -31,6 +33,12 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     const screen = params.get('screen');
     if (screen) return screen;
+
+    // 카카오 콜백 code 파라미터가 있으면 로딩 화면 표시 (콜백 처리 대기)
+    const code = params.get('code');
+    if (code && !localStorage.getItem('accessToken')) {
+      return 'loading';
+    }
 
     const savedScreen = localStorage.getItem('currentScreen');
     const tendencyCompleted = localStorage.getItem('tendencyCompleted') === 'true';
@@ -159,6 +167,9 @@ function App() {
   const [showFAQ, setShowFAQ] = useState(initialScreen === 'faq');
   const [showProfileCard, setShowProfileCard] = useState(false);
 
+  // 푸시 알림 (연동 비활성화)
+  // const { toasts, removeToast, addTestToast, requestPermission: requestPushPermission } = usePushNotification();
+
   // 회원가입 데이터 상태
   const [signupName, setSignupName] = useState('');
 
@@ -199,6 +210,40 @@ function App() {
     expectedInvestment: string;
   }[]>([]);
   const [fadeOut, setFadeOut] = useState(false);
+
+  // 카카오 OAuth 콜백 처리
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+
+    // code 파라미터가 있고, 이미 로그인 상태가 아닌 경우 카카오 콜백 처리
+    if (code && !localStorage.getItem('accessToken')) {
+      console.log('[카카오 콜백] code 파라미터 감지:', code);
+
+      // URL에서 code 파라미터 제거 (히스토리 정리)
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+
+      // 카카오 콜백 처리
+      (async () => {
+        try {
+          await authApi.handleKakaoCallback(code);
+          console.log('[카카오 콜백] 로그인 성공');
+          // 로딩 화면 숨기기
+          setShowLoading(false);
+          // handleSocialLogin과 동일한 흐름
+          await handleSocialLogin('kakao');
+        } catch (err) {
+          console.error('[카카오 콜백] 로그인 실패:', err);
+          setShowLoading(false);
+          alert('카카오 로그인에 실패했습니다. 다시 시도해주세요.');
+          // 로그인 화면으로 이동
+          setShowLogin(true);
+          localStorage.setItem('currentScreen', 'login');
+        }
+      })();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     // 스플래시 화면일 때만 자동 전환
@@ -343,6 +388,9 @@ function App() {
       if (savedBrokerage) {
         setSelectedBrokerage(savedBrokerage);
       }
+
+      // 푸시 알림 권한 요청 (연동 비활성화)
+      // requestPushPermission();
     } catch (err) {
       console.error('사용자 데이터 로드 실패:', err);
     } finally {
@@ -656,10 +704,10 @@ function App() {
   };
 
   const handleStartChallengeAgeNo = () => {
-    console.log('19세 미만 선택 - 청소년 화면으로 이동');
+    console.log('19세 미만 선택 - 상품 화면으로 이동');
     setShowStartChallengeAge(false);
-    setShowStartChallengeYouth(true);
-    localStorage.setItem('currentScreen', 'startChallengeYouth');
+    setShowStartChallengeProduct(true);
+    localStorage.setItem('currentScreen', 'startChallengeProduct');
   };
 
   const handleStartChallengeAgeYes = async () => {
@@ -670,23 +718,14 @@ function App() {
       const ageResult = await challengeApi.checkAge();
       console.log('나이 확인 결과:', ageResult);
 
-      if (ageResult.adult) {
-        // 성인 → 추천 화면으로
-        setShowStartChallengeAge(false);
-        setShowStartChallengeRecommend(true);
-        localStorage.setItem('currentScreen', 'startChallengeRecommend');
-      } else {
-        // 미성년 → 청소년 화면으로
-        setShowStartChallengeAge(false);
-        setShowStartChallengeYouth(true);
-        localStorage.setItem('currentScreen', 'startChallengeYouth');
-      }
+      setShowStartChallengeAge(false);
+        setShowStartChallengeProduct(true);
+        localStorage.setItem('currentScreen', 'startChallengeProduct');
     } catch (error) {
       console.error('나이 확인 실패:', error);
-      // API 실패 시 사용자 선택 기반으로 진행
       setShowStartChallengeAge(false);
-      setShowStartChallengeRecommend(true);
-      localStorage.setItem('currentScreen', 'startChallengeRecommend');
+      setShowStartChallengeProduct(true);
+      localStorage.setItem('currentScreen', 'startChallengeProduct');
     }
   };
 
@@ -717,10 +756,10 @@ function App() {
   };
 
   const handleStartChallengeYouthConfirm = () => {
-    console.log('청소년 적금 선택 - 추천 화면으로');
+    console.log('청소년 적금 선택 - 상품 화면으로');
     setShowStartChallengeYouth(false);
-    setShowStartChallengeRecommend(true);
-    localStorage.setItem('currentScreen', 'startChallengeRecommend');
+    setShowStartChallengeProduct(true);
+    localStorage.setItem('currentScreen', 'startChallengeProduct');
   };
 
   const handleStartChallengeRecommendBack = () => {
@@ -770,8 +809,8 @@ function App() {
 
   const handleStartChallengeProductBack = () => {
     setShowStartChallengeProduct(false);
-    setShowStartChallengeRecommend(true);
-    localStorage.setItem('currentScreen', 'startChallengeRecommend');
+    setShowStartChallengeAge(true);
+    localStorage.setItem('currentScreen', 'startChallengeAge');
   };
 
   const [isStartingChallenge, setIsStartingChallenge] = useState(false);
@@ -908,13 +947,37 @@ function App() {
     localStorage.setItem('challengeCompleted', 'true');
   };
 
+  // 알림 토스트 클릭 → 딥링크 라우팅
+  const handleToastClick = useCallback((targetType: string, targetId: string) => {
+    const screenMap: Record<string, () => void> = {
+      CHALLENGE: () => { setShowStartChallenge(true); localStorage.setItem('currentScreen', 'startChallenge'); },
+      GUIDE: () => { setShowGuide(true); localStorage.setItem('currentScreen', 'guide'); },
+      GUIDE_DETAIL: () => {
+        if (targetId) localStorage.setItem('selectedGuideId', targetId);
+        setShowGuideDetail(true);
+        localStorage.setItem('currentScreen', 'guideDetail');
+      },
+      NOTIFICATION: () => { setShowNotification(true); localStorage.setItem('currentScreen', 'notification'); },
+      HOME: () => { setShowHome(true); localStorage.setItem('currentScreen', 'home'); },
+      SETTINGS: () => { setShowSettings(true); localStorage.setItem('currentScreen', 'settings'); },
+    };
+
+    const navigate = screenMap[targetType];
+    if (navigate) {
+      navigate();
+    } else {
+      // 기본: 알림 목록으로
+      setShowNotification(true);
+      localStorage.setItem('currentScreen', 'notification');
+    }
+  }, []);
+
   // 체크인 화면 핸들러
   const handleCheckIn = () => {
     console.log('체크인 하기 클릭');
     setShowHomeCheckIn(false);
-    setShowStartChallenge(true);
-    localStorage.setItem('currentScreen', 'startChallenge');
-    localStorage.setItem('challengeCompleted', 'false'); // 챌린지 시작 시 false로 설정
+    setShowFAQ(true);
+    localStorage.setItem('currentScreen', 'faq');
   };
 
   const handleSkipChallenge = () => {
@@ -1900,11 +1963,14 @@ function App() {
           <FAQScreen
             onBack={() => {
               setShowFAQ(false);
-              localStorage.removeItem('currentScreen');
+              setShowHomeCheckIn(true);
+              localStorage.setItem('currentScreen', 'homeCheckIn');
             }}
             onStartChallenge={() => {
               setShowFAQ(false);
-              localStorage.removeItem('currentScreen');
+              setShowStartChallenge(true);
+              localStorage.setItem('currentScreen', 'startChallenge');
+              localStorage.setItem('challengeCompleted', 'false');
             }}
             userName={homeNickname || userInfo?.nickname || '기비'}
           />
@@ -1992,6 +2058,19 @@ function App() {
           animation: fadeIn 0.5s ease-in;
         }
       `}</style>
+
+      {/* 알림 토스트 (연동 비활성화) */}
+      {/* {toasts.map((toast) => (
+        <NotificationToast
+          key={toast.id}
+          title={toast.title}
+          body={toast.body}
+          targetType={toast.targetType}
+          targetId={toast.targetId}
+          onClose={() => removeToast(toast.id)}
+          onClick={handleToastClick}
+        />
+      ))} */}
     </>
   );
 }

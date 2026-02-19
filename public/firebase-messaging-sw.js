@@ -14,6 +14,16 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+// targetType → screen 매핑
+const TARGET_SCREEN_MAP = {
+  CHALLENGE: 'startChallenge',
+  GUIDE: 'guide',
+  GUIDE_DETAIL: 'guideDetail',
+  NOTIFICATION: 'notification',
+  HOME: 'home',
+  SETTINGS: 'settings',
+};
+
 // 백그라운드 메시지 수신
 messaging.onBackgroundMessage((payload) => {
   console.log('[SW] 백그라운드 메시지 수신:', payload);
@@ -23,24 +33,46 @@ messaging.onBackgroundMessage((payload) => {
     body: payload.notification?.body || '',
     icon: '/icon-192x192.png',
     badge: '/icon-72x72.png',
-    data: payload.data,
+    data: payload.data || {},
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// 알림 클릭 처리
+// 알림 클릭 처리 → 딥링크
 self.addEventListener('notificationclick', (event) => {
   console.log('[SW] 알림 클릭:', event);
   event.notification.close();
 
-  // 앱 열기
+  const data = event.notification.data || {};
+  const targetType = data.targetType || '';
+  const targetId = data.targetId || '';
+
+  // 딥링크 URL 생성
+  let url = '/';
+  const screen = TARGET_SCREEN_MAP[targetType];
+  if (screen) {
+    url = `/?screen=${screen}`;
+    if (targetId) {
+      url += `&id=${targetId}`;
+    }
+  } else if (targetType) {
+    // 매핑에 없는 경우 알림 목록으로
+    url = '/?screen=notification';
+  }
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      if (clientList.length > 0) {
-        return clientList[0].focus();
+      // 이미 열린 창이 있으면 해당 창으로 이동
+      for (const client of clientList) {
+        if ('focus' in client) {
+          client.focus();
+          client.navigate(url);
+          return;
+        }
       }
-      return clients.openWindow('/');
+      // 열린 창이 없으면 새로 열기
+      return clients.openWindow(url);
     })
   );
 });

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { authApi } from '../../api';
+import { clearAuth } from '../../utils/token';
 import emailIcon from '../../assets/images/svg/ic_email.svg';
 import lockIcon from '../../assets/images/svg/ic_lock.svg';
 import eyeOnIcon from '../../assets/images/svg/ic_eye_on.svg';
@@ -49,12 +50,16 @@ function SignupEmailPasswordScreen({ onBack, onNext, userName }: SignupEmailPass
       await authApi.signup({
         email,
         password,
-        username: userName || '',
+        name: userName || '',
+        nickname: userName || '',
+        language: 'KO',
+        birthDate: birthDate || '',
       });
 
       console.log('회원가입 성공:', { email, name: userName });
 
-      // 자동 로그인
+      // 기존 인증 데이터 초기화 후 자동 로그인
+      clearAuth();
       await authApi.login({ email, password });
       console.log('자동 로그인 성공');
 

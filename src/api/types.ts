@@ -27,7 +27,10 @@ export interface UserDetailDTO {
 export interface UserSignupDTO {
   email: string;
   password: string;
-  username: string;
+  name: string;
+  nickname: string;
+  language: string;
+  birthDate: string;
 }
 
 export interface UserLoginDTO {

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Logo, Character } from '../../components/common';
+import givyCharLogo from '../../assets/images/png/img_logo_givy_symbol+text+charater.png';
 import { authApi } from '../../api';
 import emailIcon from '../../assets/images/svg/ic_email.svg';
 import lockIcon from '../../assets/images/svg/ic_lock.svg';
@@ -130,52 +130,16 @@ function EmailLoginScreen({
         <img src={backIcon} alt="뒤로가기" style={{ width: '24px', height: '24px' }} />
       </button>
 
-      {/* 로고 + GIVY 텍스트 */}
+      {/* 캐릭터 로고 이미지 - 203.7px x 104.7px, margin: 52px 94.6px 59.3px 94.8px */}
       <div
         style={{
-          marginTop: '100px',
+          margin: '52px 94.6px 59.3px 94.8px',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          marginBottom: '16px'
         }}
       >
-        {/* 로고 - width: 27.7px, height: 25.4px, margin: 0 4.5px 5.8px 0 */}
-        <div style={{ marginRight: '4.5px', marginBottom: '5.8px' }}>
-          <Logo />
-        </div>
-
-        {/* GIVY 텍스트 - font-size: 25.4px, font-weight: 800, margin: 1.2px 0 0 4.5px */}
-        <div
-          style={{
-            fontFamily: 'Pretendard',
-            fontSize: '25.4px',
-            fontWeight: 800,
-            color: '#545FE8',
-            marginLeft: '4.5px',
-            marginTop: '1.2px'
-          }}
-        >
-          GIVY
-        </div>
-      </div>
-
-      {/* 캐릭터 이미지들 - 노랑, 초록, 빨강, 핑크 */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-end',
-          gap: '8px',
-          marginBottom: '40px',
-          paddingLeft: '24px',
-          paddingRight: '24px'
-        }}
-      >
-        <Character type="coin" width="70px" />
-        <Character type="paper-money" width="35px" />
-        <Character type="card" width="40px" />
-        <Character type="bankbook" width="54px" />
+        <img src={givyCharLogo} alt="GIVY" style={{ width: '203.7px', height: '104.7px', objectFit: 'contain' }} />
       </div>
 
       {/* 입력 폼 */}
