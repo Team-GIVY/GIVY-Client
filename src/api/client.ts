@@ -11,7 +11,7 @@ const forceLogout = () => {
 };
 
 // API 기본 URL 설정 (환경변수 사용)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://43.202.26.68:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 // 재시도 플래그를 위한 확장 타입
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
