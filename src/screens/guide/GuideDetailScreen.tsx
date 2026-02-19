@@ -11,7 +11,7 @@ import bookmarkOff from '../../assets/images/svg/ic_bookmark_off.svg';
 import talkIcon from '../../assets/images/svg/ic_talk.svg';
 
 // 하드코딩 가이드 상세 데이터
-const hardcodedGuides: Record<number, { title: string; category: string; body: string }> = {
+const hardcodedGuides: Record<number, { title: string; category: string; body: string; imageUrl?: string }> = {
   1: {
     title: '세금 낼 돈 아껴서 공짜 치킨 드세요!',
     category: '#절세꿀팁 #필수통장 #13월의월급',

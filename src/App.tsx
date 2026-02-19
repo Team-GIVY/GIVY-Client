@@ -11,8 +11,8 @@ import { FAQScreen } from './screens/faq';
 import { SettingsScreen, PurchaseHistoryScreen, BrokerageSettingsScreen, PersonalityRetestScreen, WishlistScreen, MyStampScreen, ProfileEditScreen, NicknameEditScreen, NameScreen, EmailEditScreen, PasswordChangeScreen, LinkedAccountScreen, LanguageScreen } from './screens/settings';
 import { UserProfileCard } from './components/profile';
 import { LogoutModal, WithdrawModal } from './components/common';
-import NotificationToast from './components/common/NotificationToast';
-import { usePushNotification } from './hooks/usePushNotification';
+// import NotificationToast from './components/common/NotificationToast';
+// import { usePushNotification } from './hooks/usePushNotification';
 import { authApi, homeApi, tendencyApi, challengeApi } from './api';
 import { getBuyHistoryList, deleteBuyHistory } from './api/buyHistory';
 import type { UserDetailDTO, ProductOverviewDTO, TendencyResultDTO, StartChallengeStatusDTO } from './api/types';
@@ -947,8 +947,8 @@ function App() {
     localStorage.setItem('challengeCompleted', 'true');
   };
 
-  // 알림 토스트 클릭 → 딥링크 라우팅
-  const handleToastClick = useCallback((targetType: string, targetId: string) => {
+  // 알림 토스트 클릭 → 딥링크 라우팅 (연동 비활성화)
+  /* const handleToastClick = useCallback((targetType: string, targetId: string) => {
     const screenMap: Record<string, () => void> = {
       CHALLENGE: () => { setShowStartChallenge(true); localStorage.setItem('currentScreen', 'startChallenge'); },
       GUIDE: () => { setShowGuide(true); localStorage.setItem('currentScreen', 'guide'); },
@@ -970,7 +970,7 @@ function App() {
       setShowNotification(true);
       localStorage.setItem('currentScreen', 'notification');
     }
-  }, []);
+  }, []); */
 
   // 체크인 화면 핸들러
   const handleCheckIn = () => {
