@@ -130,7 +130,7 @@ function GuideDetailScreen({ guideId, onBack, onShare, onApply }: GuideDetailScr
           title: hardcoded.title,
           body: hardcoded.body,
           category: 'SAVING' as GuideCategory,
-          imageUrl: imageMap[hardcoded.imageUrl] || '',
+          imageUrl: (hardcoded.imageUrl && imageMap[hardcoded.imageUrl]) || '',
           likeCount: 3,
           storeCount: 0,
           isLiked: false,
