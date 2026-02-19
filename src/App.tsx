@@ -14,6 +14,8 @@ import { LogoutModal, WithdrawModal } from './components/common';
 // import NotificationToast from './components/common/NotificationToast';
 // import { usePushNotification } from './hooks/usePushNotification';
 import { authApi, homeApi, tendencyApi, challengeApi } from './api';
+import { saveTokens } from './utils/token';
+import { resetAuthState } from './api/client';
 import { getBuyHistoryList, deleteBuyHistory } from './api/buyHistory';
 import type { UserDetailDTO, ProductOverviewDTO, TendencyResultDTO, StartChallengeStatusDTO } from './api/types';
 // 스탬프 이미지
@@ -34,9 +36,9 @@ function App() {
     const screen = params.get('screen');
     if (screen) return screen;
 
-    // 카카오 콜백 code 파라미터가 있으면 로딩 화면 표시 (콜백 처리 대기)
-    const code = params.get('code');
-    if (code && !localStorage.getItem('accessToken')) {
+    // 카카오 콜백 token 파라미터가 있으면 로딩 화면 표시 (콜백 처리 대기)
+    const token = params.get('token');
+    if (token && !localStorage.getItem('accessToken')) {
       return 'loading';
     }
 
@@ -211,33 +213,31 @@ function App() {
   }[]>([]);
   const [fadeOut, setFadeOut] = useState(false);
 
-  // 카카오 OAuth 콜백 처리
+  // 카카오 OAuth 콜백 처리 (백엔드가 ?token=JWT 로 리다이렉트)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
+    const token = params.get('token');
 
-    // code 파라미터가 있고, 이미 로그인 상태가 아닌 경우 카카오 콜백 처리
-    if (code && !localStorage.getItem('accessToken')) {
-      console.log('[카카오 콜백] code 파라미터 감지:', code);
+    if (token && !localStorage.getItem('accessToken')) {
+      console.log('[카카오 콜백] token 파라미터 감지');
 
-      // URL에서 code 파라미터 제거 (히스토리 정리)
+      // URL에서 token 파라미터 제거 (히스토리 정리)
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
 
-      // 카카오 콜백 처리
+      // JWT 토큰 저장
+      saveTokens(token, '');
+      resetAuthState();
+
+      // 로딩 화면 숨기기
+      setShowLoading(false);
+
+      // handleSocialLogin과 동일한 흐름
       (async () => {
         try {
-          await authApi.handleKakaoCallback(code);
-          console.log('[카카오 콜백] 로그인 성공');
-          // 로딩 화면 숨기기
-          setShowLoading(false);
-          // handleSocialLogin과 동일한 흐름
           await handleSocialLogin('kakao');
         } catch (err) {
-          console.error('[카카오 콜백] 로그인 실패:', err);
-          setShowLoading(false);
-          alert('카카오 로그인에 실패했습니다. 다시 시도해주세요.');
-          // 로그인 화면으로 이동
+          console.error('[카카오 콜백] 로그인 처리 실패:', err);
           setShowLogin(true);
           localStorage.setItem('currentScreen', 'login');
         }
