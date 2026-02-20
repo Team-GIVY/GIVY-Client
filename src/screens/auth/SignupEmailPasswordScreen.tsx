@@ -64,8 +64,16 @@ function SignupEmailPasswordScreen({ onBack, onNext, userName }: SignupEmailPass
       console.log('자동 로그인 성공');
 
       onNext?.(email, password);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : '회원가입에 실패했습니다.';
+    } catch (err: unknown) {
+      let message = '회원가입에 실패했습니다.';
+      if (err instanceof Error) {
+        message = err.message;
+      }
+      // 400 에러 (중복 이메일 등) 시 사용자 친화적 메시지
+      const axiosErr = err as { response?: { status?: number } };
+      if (axiosErr?.response?.status === 400) {
+        message = '이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.';
+      }
       setError(message);
       alert(message);
     } finally {

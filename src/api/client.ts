@@ -112,8 +112,7 @@ apiClient.interceptors.response.use(
           return Promise.reject(refreshError);
         }
       } else {
-        console.log('[apiClient] refreshToken 없음');
-        forceLogout();
+        console.log('[apiClient] refreshToken 없음 - 에러 전달 (강제 로그아웃 안 함)');
         return Promise.reject(error);
       }
     }

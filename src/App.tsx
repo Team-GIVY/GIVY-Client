@@ -103,6 +103,7 @@ function App() {
     }
 
     // 챌린지 진행 중 화면에서 새로고침 시 homeCheckIn으로 리다이렉트
+    // (카카오 콜백으로 돌아온 경우는 제외)
     const challengeScreens = [
       'startChallenge',
       'startChallengeAge',
@@ -115,7 +116,7 @@ function App() {
       'startChallengeSearchName',
       'startChallengeComplete',
     ];
-    if (savedScreen && challengeScreens.includes(savedScreen) && !challengeCompleted) {
+    if (savedScreen && challengeScreens.includes(savedScreen) && !challengeCompleted && !token) {
       return 'homeCheckIn';
     }
 
@@ -514,6 +515,25 @@ function App() {
 
   const handleSignup = () => {
     console.log('회원가입 클릭');
+    // 이전 세션 데이터 정리 (이전 로그인 정보가 남아있으면 새 회원가입에 영향)
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('tendencyCompleted');
+    localStorage.removeItem('challengeCompleted');
+    localStorage.removeItem('cachedNickname');
+    localStorage.removeItem('userStatus');
+    localStorage.removeItem('loginProvider');
+    localStorage.removeItem('loginEmail');
+    localStorage.removeItem('startChallengeId');
+    localStorage.removeItem('selectedProductId');
+    localStorage.removeItem('selectedProductName');
+    localStorage.removeItem('selectedProductCode');
+    localStorage.removeItem('selectedBrokerage');
+    localStorage.removeItem('investmentType');
+    // React 상태도 초기화
+    setUserInfo(null);
+    setHomeNickname('');
+    setSignupName('');
     setShowLogin(false);
     setShowEmailLogin(false);
     setShowSignupName(true);
