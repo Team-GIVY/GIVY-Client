@@ -56,8 +56,7 @@ function Splash() {
       </div>
 
       {/* 하단 로고 섹션 */}
-      <div className="absolute left-[24px]" style={{ top: '295px' }}>
-        {/* G 로고 아이콘 */}
+      <div className="absolute left-[24px] bottom-[40px]">
         <img
           src={givyLogo}
           alt="GIVY"
@@ -67,7 +66,6 @@ function Splash() {
             filter: 'brightness(0) saturate(100%) invert(83%) sepia(10%) saturate(1000%) hue-rotate(200deg) brightness(100%)'
           }}
         />
-        {/* GIVY 텍스트 */}
         <div
           style={{
             fontFamily: 'Pretendard',
@@ -77,7 +75,6 @@ function Splash() {
             letterSpacing: '-0.2px',
             textAlign: 'left',
             color: '#c2c7fc',
-            marginTop: '0px',
           }}
         >
           GIVY
