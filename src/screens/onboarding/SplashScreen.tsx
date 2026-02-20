@@ -15,7 +15,7 @@ import givyLogo from '../../assets/images/png/img_logo_givy_symbol.png';
 function Splash() {
   return (
     // 전체 화면 컨테이너 (iPhone 16 Pro 사이즈: 402 x 874px)
-    <div className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto bg-[#7681FC] flex flex-col text-white overflow-x-hidden overflow-y-auto relative">
+    <div className="w-full h-screen max-w-[402px] mx-auto bg-[#7681FC] flex flex-col text-white overflow-hidden relative">
 
       {/* 메인 텍스트 섹션 - margin: 101px 123px 295px 24px */}
       <div

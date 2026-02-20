@@ -229,15 +229,42 @@ function App() {
       saveTokens(token, '');
       resetAuthState();
 
-      // 로딩 화면 숨기기
-      setShowLoading(false);
-
-      // handleSocialLogin과 동일한 흐름
+      // 이메일/구글 로그인과 동일하게 상태 체크
       (async () => {
         try {
+          // 성향 테스트 완료 여부 확인
+          try {
+            await tendencyApi.getMyTendency();
+            localStorage.setItem('tendencyCompleted', 'true');
+            console.log('[카카오 콜백] 성향 테스트 완료 상태');
+          } catch {
+            localStorage.setItem('tendencyCompleted', 'false');
+            console.log('[카카오 콜백] 성향 테스트 미완료 상태');
+          }
+
+          // 챌린지 상태 확인
+          try {
+            const status = await challengeApi.getChallengeStatus();
+            if (status.status === 'COMPLETED') {
+              localStorage.setItem('challengeCompleted', 'true');
+              console.log('[카카오 콜백] 챌린지 완료 상태');
+            } else {
+              localStorage.setItem('challengeCompleted', 'false');
+              console.log('[카카오 콜백] 챌린지 미완료 상태');
+            }
+          } catch {
+            localStorage.setItem('challengeCompleted', 'false');
+            console.log('[카카오 콜백] 챌린지 없음');
+          }
+
+          // 로딩 화면 숨기기
+          setShowLoading(false);
+
+          // handleSocialLogin 흐름 진행
           await handleSocialLogin('kakao');
         } catch (err) {
           console.error('[카카오 콜백] 로그인 처리 실패:', err);
+          setShowLoading(false);
           setShowLogin(true);
           localStorage.setItem('currentScreen', 'login');
         }
