@@ -104,7 +104,7 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
 
   return (
     <div
-      className="w-full h-screen max-w-[402px] max-h-[874px] mx-auto relative overflow-x-hidden overflow-y-auto"
+      className="w-full h-screen max-w-[402px] mx-auto flex flex-col overflow-hidden"
       style={{ backgroundColor: '#F5F5F5' }}
     >
       {/* 상단 로고 */}
@@ -112,15 +112,16 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
         style={{
           marginTop: '31px',
           marginLeft: '24px',
-          marginBottom: '65.6px'
+          marginBottom: '65.6px',
+          flexShrink: 0,
         }}
       >
         <Logo />
       </div>
 
-      {/* 컨텐츠 영역 */}
-      <div style={{ marginLeft: '32px', marginRight: '32px' }}>
-        {/* 환영 멘트 - font-size: 28px, font-weight: 800, line-height: 1.36, letter-spacing: -0.28px */}
+      {/* 컨텐츠 영역 - flex-grow로 남은 공간 채움 */}
+      <div style={{ marginLeft: '32px', marginRight: '32px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        {/* 환영 멘트 */}
         <h1
           style={{
             fontFamily: 'Pretendard',
@@ -130,7 +131,8 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
             letterSpacing: '-0.28px',
             textAlign: 'left',
             color: '#393939',
-            marginBottom: '8px'
+            marginBottom: '8px',
+            flexShrink: 0,
           }}
         >
           복잡한 고민 없이 시작하는
@@ -140,7 +142,7 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
           환영합니다!
         </h1>
 
-        {/* 부제 - font-size: 16px, line-height: 1.5, letter-spacing: -0.16px */}
+        {/* 부제 */}
         <p
           style={{
             fontFamily: 'Pretendard',
@@ -150,15 +152,18 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
             letterSpacing: '-0.16px',
             textAlign: 'left',
             color: '#8D8D8D',
-            marginBottom: '200px'
+            flexShrink: 0,
           }}
         >
           3초 가입으로 바로 시작해보세요.
         </p>
 
+        {/* 유연한 여백 - 남은 공간을 자동으로 채움 */}
+        <div style={{ flex: 1 }} />
+
         {/* 말풍선 라벨 - 최근 로그인 시에만 표시 */}
         {showRecentLoginBubble && (
-          <div style={{ position: 'relative', marginBottom: '16px' }}>
+          <div style={{ position: 'relative', marginBottom: '16px', flexShrink: 0 }}>
             <div
               style={{
                 display: 'inline-block',
@@ -199,10 +204,10 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
           </div>
         )}
 
-        {/* 소셜 로그인 버튼들 - 구글 기준 양옆 12.5px, 카톡-좌측 35px, 애플-우측 35px */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '60px', marginLeft: '-32px', marginRight: '-32px' }}>
+        {/* 소셜 로그인 버튼들 */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '24px', marginLeft: '-32px', marginRight: '-32px', flexShrink: 0 }}>
           <div style={{ display: 'flex', gap: '12.5px', paddingLeft: '35px', paddingRight: '35px' }}>
-            {/* 카카오톡 - width: 85px, height: 60px, border-radius: 16px */}
+            {/* 카카오톡 */}
             <button
               onClick={() => handleSocialLogin('kakao')}
               style={{
@@ -218,7 +223,6 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
                 padding: 0
               }}
             >
-              {/* 카카오톡 아이콘 - 31.9px x 31.9px */}
               <img src={kakaoIcon} alt="카카오" style={{ width: '32px', height: '32px' }} />
             </button>
 
@@ -238,7 +242,6 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
                 padding: 0
               }}
             >
-              {/* Google 아이콘 - 24px x 24px */}
               <img src={googleIcon} alt="Google" style={{ width: '24px', height: '24px' }} />
             </button>
 
@@ -258,97 +261,98 @@ function LoginScreen({ onEmailLogin, onSocialLogin, onSignup }: LoginScreenProps
                 padding: 0
               }}
             >
-              {/* Apple 아이콘 - 20.2px x 24px */}
               <img src={appleIcon} alt="Apple" style={{ width: '20px', height: '24px' }} />
             </button>
           </div>
         </div>
       </div>
 
-      {/* 이메일로 로그인 버튼 - margin: 60px(top) 24px(left/right) 20px(bottom), width: 345px, height: 62px */}
-      <div style={{ marginTop: '60px', marginLeft: '24px', marginRight: '24px', marginBottom: '20px' }}>
-        <button
-          onClick={handleEmailLogin}
-          className="email-login-button"
-          style={{
-            width: '345px',
-            height: '62px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: '66px',
-            backgroundColor: '#E0E0E0',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#7681FC';
-            const span = e.currentTarget.querySelector('span');
-            if (span) (span as HTMLElement).style.color = '#FFFFFF';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#E0E0E0';
-            const span = e.currentTarget.querySelector('span');
-            if (span) (span as HTMLElement).style.color = '#393939';
-          }}
-        >
-          <span
+      {/* 하단 고정 영역 - 항상 화면 아래에 보임 */}
+      <div style={{ flexShrink: 0, paddingBottom: '32px' }}>
+        {/* 이메일로 로그인 버튼 */}
+        <div style={{ marginLeft: '24px', marginRight: '24px', marginBottom: '20px' }}>
+          <button
+            onClick={handleEmailLogin}
+            className="email-login-button"
             style={{
-              fontFamily: 'Pretendard',
-              fontSize: '16px',
-              fontWeight: 'normal',
-              lineHeight: '1.5',
-              letterSpacing: '-0.16px',
-              color: '#393939',
-              transition: 'color 0.3s ease'
+              width: '100%',
+              maxWidth: '345px',
+              height: '62px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: '66px',
+              backgroundColor: '#E0E0E0',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#7681FC';
+              const span = e.currentTarget.querySelector('span');
+              if (span) (span as HTMLElement).style.color = '#FFFFFF';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#E0E0E0';
+              const span = e.currentTarget.querySelector('span');
+              if (span) (span as HTMLElement).style.color = '#393939';
             }}
           >
-            이메일로 로그인
-          </span>
-        </button>
-      </div>
+            <span
+              style={{
+                fontFamily: 'Pretendard',
+                fontSize: '16px',
+                fontWeight: 'normal',
+                lineHeight: '1.5',
+                letterSpacing: '-0.16px',
+                color: '#393939',
+                transition: 'color 0.3s ease'
+              }}
+            >
+              이메일로 로그인
+            </span>
+          </button>
+        </div>
 
-      {/* 회원가입 링크 - font-size: 14px, line-height: 1.57, letter-spacing: -0.14px */}
-      <div style={{ textAlign: 'center', marginLeft: '24px', marginRight: '24px' }}>
-        <span
-          style={{
-            fontFamily: 'Pretendard',
-            fontSize: '14px',
-            fontWeight: 'normal',
-            lineHeight: '1.57',
-            letterSpacing: '-0.14px',
-            color: '#A8A8A8'
-          }}
-        >
-          아직 회원이 아니신가요?{' '}
-        </span>
-        <button
-          onClick={handleSignup}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0
-          }}
-        >
+        {/* 회원가입 링크 */}
+        <div style={{ textAlign: 'center', marginLeft: '24px', marginRight: '24px' }}>
           <span
             style={{
-              width: '48px',
-              height: '22px',
               fontFamily: 'Pretendard',
               fontSize: '14px',
-              fontWeight: 500,
+              fontWeight: 'normal',
               lineHeight: '1.57',
               letterSpacing: '-0.14px',
-              textAlign: 'left',
-              color: '#6B6B6B',
-              textDecoration: 'underline'
+              color: '#A8A8A8'
             }}
           >
-            회원가입
+            아직 회원이 아니신가요?{' '}
           </span>
-        </button>
+          <button
+            onClick={handleSignup}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'Pretendard',
+                fontSize: '14px',
+                fontWeight: 500,
+                lineHeight: '1.57',
+                letterSpacing: '-0.14px',
+                textAlign: 'left',
+                color: '#6B6B6B',
+                textDecoration: 'underline'
+              }}
+            >
+              회원가입
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );
